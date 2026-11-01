@@ -1,0 +1,8 @@
+
+.back-to-arcade { position: fixed; left: 14px; bottom: 12px; z-index: 200; padding: 12px; background: #0a0f28; border: 2px solid #ffd700; color: #ffd700; font: 12px monospace; text-decoration: none; }
+:focus-visible { outline: 3px solid #fff !important; outline-offset: 3px; }
+.hint, .diff-info, .version, .cert-desc { color: #b8c6e2 !important; opacity: 1 !important; }
+.start-screen, .menu-screen, .name-screen, .diff-screen, .end-screen { overflow-y: auto; padding: 55px 12px 60px; }
+@media (max-width: 600px) { .team { gap: 12px !important; } .key { width: 26px !important; height: 44px !important; } .del, .ok { width: 70px !important; } .hint { text-align: center; max-width: 90vw; line-height: 1.7; } .topbar { gap: 6px !important; padding: 0 8px !important; } }
+@media (max-height: 600px) { .start-screen, .menu-screen, .name-screen, .diff-screen, .end-screen { align-items: safe center !important; } .menu-screen .content { gap: 8px; } .menu-screen .title { font-size: 25px; } .version { position: static !important; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }

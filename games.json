@@ -1,0 +1,12 @@
+[
+  {
+    "slug": "the-legend-of-aulab",
+    "title": "The Legend of Aulab",
+    "description": "Da un lavoro senza fine a un'avventura nel codice. Schiva i bug, raccogli monete, cambia il tuo destino.",
+    "genre": "STORY / RUNNER",
+    "controls": "SPAZIO / ↑ per saltare · mouse o tocco",
+    "status": "playable"
+  },
+  { "slug": "slot-02", "title": "Prossima avventura", "status": "coming-soon" },
+  { "slug": "slot-03", "title": "Un nuovo mondo", "status": "coming-soon" }
+]

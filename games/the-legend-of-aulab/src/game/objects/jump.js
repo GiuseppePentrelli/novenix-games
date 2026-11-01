@@ -1,55 +1,47 @@
-export function Salto(Player) {
-  const JUMP_POWER = 1200
-  const GRAVITY    = 2300
-  const COYOTE_TIME   = 0.1
-  const INPUT_BUFFER  = 0.5
+import { createJumpController, JUMP } from '../jump-controller.js'
 
-  let canJump    = true
-  let coyoteTimer = 0
-  let jumpBuffer  = 0
+export function Salto(player, speed) {
+  const input = createJumpController()
+  setGravity(JUMP.gravity)
 
-  setGravity(GRAVITY)
-
-  const eseguiSalto = () => {
+  const advance = (delta) => {
     if (window.isPaused) return
-    if (canJump && (Player.isGrounded() || coyoteTimer > 0)) {
-      Player.jump(JUMP_POWER)
-      canJump = false
-      coyoteTimer = 0
-      jumpBuffer = 0
-    } else {
-      jumpBuffer = INPUT_BUFFER
-    }
+    const next = input.step(delta, player.isGrounded(), player.vel.y)
+    if (next.jump) player.jump(JUMP.speed)
+    player.vel.x = speed
+    player.gravityScale = next.gravityScale
   }
-
-  onKeyPress(["space", "up"], eseguiSalto)
-  onMousePress(eseguiSalto)
-
-  window.addEventListener("hud:jump", eseguiSalto)
-
-  onUpdate(() => {
+  const press = () => {
     if (window.isPaused) return
-    const dt2 = dt()
-    if (!Player.isGrounded()) {
-      coyoteTimer -= dt2
-    } else {
-      canJump = true
-      coyoteTimer = COYOTE_TIME
-    }
+    input.press()
+    advance(0)
+  }
+  const keydown = (event) => {
+    if (!['Space', 'ArrowUp'].includes(event.code) || event.repeat) return
+    if (event.target instanceof Element && event.target.closest('button, a, input, textarea, select')) return
+    event.preventDefault()
+    press()
+  }
+  const pointerdown = (event) => {
+    if (event.button !== 0 || event.target.tagName !== 'CANVAS') return
+    event.preventDefault()
+    press()
+  }
+  const clear = () => input.clear()
 
-    if (jumpBuffer > 0) {
-      jumpBuffer -= dt2
-      if (canJump && Player.isGrounded()) {
-        Player.jump(JUMP_POWER)
-        jumpBuffer = 0
-        canJump = false
-        coyoteTimer = 0
-      }
-    }
+  window.addEventListener('keydown', keydown)
+  window.addEventListener('pointerdown', pointerdown)
+  window.addEventListener('hud:jump', press)
+  window.addEventListener('hud:pause', clear)
+  player.controlStep = () => advance(dt())
+  const landing = player.onGround(() => advance(0))
 
-    if (!Player.isGrounded() && Player.vel.y > 0) Player.vel.y += 6000 * dt2
-    if (!Player.isGrounded() && Player.vel.y < 0) Player.vel.y *= Math.pow(0.985, dt2 * 60)
-  })
-
-  return () => window.removeEventListener("hud:jump", eseguiSalto)
+  return () => {
+    player.controlStep = () => {}
+    landing.cancel()
+    window.removeEventListener('keydown', keydown)
+    window.removeEventListener('pointerdown', pointerdown)
+    window.removeEventListener('hud:jump', press)
+    window.removeEventListener('hud:pause', clear)
+  }
 }

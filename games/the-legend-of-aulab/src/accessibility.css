@@ -6,3 +6,6 @@
 @media (max-width: 600px) { .team { gap: 12px !important; } .key { width: 26px !important; height: 44px !important; } .del, .ok { width: 70px !important; } .hint { text-align: center; max-width: 90vw; line-height: 1.7; } .topbar { gap: 6px !important; padding: 0 8px !important; } }
 @media (max-height: 600px) { .start-screen, .menu-screen, .name-screen, .diff-screen, .end-screen { align-items: safe center !important; } .menu-screen .content { gap: 8px; } .menu-screen .title { font-size: 25px; } .version { position: static !important; } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+canvas { touch-action: none; }
+html, body { overscroll-behavior: none; }

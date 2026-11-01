@@ -1,5 +1,7 @@
 export function registerArrivoDocenti() {
   scene("ArrivoDocenti", () => {
+    window.gamePhase = 'story'
+    window.dispatchEvent(new CustomEvent('game:phase', { detail: 'story' }))
     const streetBg = add([sprite("streetNight"), pos(0, 0), fixed()])
     const scaleFactor = Math.max(width() / streetBg.width, height() / streetBg.height)
     streetBg.scale = vec2(scaleFactor)

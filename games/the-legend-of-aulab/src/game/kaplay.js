@@ -6,6 +6,14 @@ import { registerTutorial } from './scenes/tutorial.js'
 import { registerLevel1, resetDeathCount } from './scenes/level1.js'
 
 let initialized = false
+let playing = false
+
+function pauseGame(paused) {
+  if (!playing) return
+  window.isPaused = paused
+  getTreeRoot().paused = paused
+  window.dispatchEvent(new CustomEvent('game:pause', { detail: paused }))
+}
 
 export function initKaplay() {
   if (initialized) return
@@ -13,6 +21,8 @@ export function initKaplay() {
 
   kaplay({
     touchToMouse: true,
+    pixelDensity: 1,
+    debug: false,
     width: 1280,
     height: 720,
     letterbox: true,
@@ -29,8 +39,16 @@ export function initKaplay() {
   registerTutorial()
   registerLevel1()
   window.addEventListener('hud:pause', (event) => {
-    window.isPaused = event.detail
-    getTreeRoot().paused = event.detail
+    pauseGame(event.detail)
+  })
+  window.addEventListener('blur', () => {
+    if (playing && !window.isPaused) window.dispatchEvent(new CustomEvent('hud:pause', { detail: true }))
+  })
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden && playing && !window.isPaused) window.dispatchEvent(new CustomEvent('hud:pause', { detail: true }))
+  })
+  window.addEventListener('hud:skip-intro', () => {
+    if (!window.isPaused && ['Level_0', 'ArrivoDocenti'].includes(getSceneName())) go('Level_1')
   })
   window.addEventListener('hud:quit', () => {
     stopGame()
@@ -40,6 +58,8 @@ export function initKaplay() {
 }
 
 export function startGame(config) {
+  playing = true
+  window.gamePhase = 'story'
   resetDeathCount()
   window.gameConfig = config
   window.isPaused = false
@@ -49,6 +69,7 @@ export function startGame(config) {
 
 export function stopGame() {
   if (!initialized) return
+  playing = false
   getTreeRoot().paused = false
   window.isPaused = true
   go('Idle')

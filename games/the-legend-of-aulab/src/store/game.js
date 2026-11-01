@@ -21,7 +21,11 @@ export const useGameStore = defineStore('game', () => {
   let saved = {}
   try {
     const parsed = JSON.parse(localStorage.getItem('aulab_scores') || '{}')
-    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) saved = parsed
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+      saved = Object.fromEntries(Object.entries(parsed).filter(([, value]) =>
+        value && Number.isInteger(value.coins) && value.coins >= 0 && Number.isInteger(value.deaths) && value.deaths >= 0,
+      ))
+    }
   } catch {}
   const highScores = ref(saved)
 

@@ -1,18 +1,9 @@
-export function CreaMinus() {
+export function CreaMinus(width = 64) {
   return [
-    sprite("minus"),
-    area({
-      shape: new Rect(vec2(0), 64, 21),
-      offset: vec2(0, -20),
-    }),
+    sprite('minus', { width, height: 64, tiled: true }),
+    area({ shape: new Rect(vec2(0), width, 21), offset: vec2(0, -20) }),
     body({ isStatic: true }),
-    anchor("bot"),
-    "pavimento",
-    "jump_pad",
-    {
-      add() {
-        this.onCollide("player", () => shake(1))
-      }
-    }
+    anchor('bot'),
+    'pavimento',
   ]
 }

@@ -1,5 +1,7 @@
 export function registerTutorial() {
   scene("Tutorial", () => {
+    window.gamePhase = 'tutorial'
+    window.dispatchEvent(new CustomEvent('game:phase', { detail: 'tutorial' }))
     add([rect(width(), height()), color(10, 10, 20), fixed()])
     add([
       text("01010110 01101001 01110010 01110100 01110101 01100001", { size: 14, opacity: 0.1, width: width() }),
@@ -46,8 +48,9 @@ export function registerTutorial() {
         color(255, 255, 255),
         opacity(0.2),
       ])
+      const speed = rand(30, 60)
       c.onUpdate(() => {
-        c.move(0, rand(30, 60))
+        c.move(0, speed)
         if (c.pos.y > height()) c.pos.y = -20
       })
     }

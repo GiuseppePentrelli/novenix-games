@@ -1,7 +1,7 @@
 export function CreaBug() {
   return [
     sprite("beantle"),
-    area(),
+    area({ collisionIgnore: ['enemy', 'moneta', 'mela'] }),
     body({ isStatic: true }),
     anchor("bot"),
     "enemy",
@@ -11,7 +11,7 @@ export function CreaBug() {
 export function CreaGlitch() {
   return [
     sprite("ghosty"),
-    area(),
+    area({ collisionIgnore: ['enemy', 'moneta', 'mela'] }),
     anchor("bot"),
     body(),
     "glitch",
@@ -22,7 +22,7 @@ export function CreaGlitch() {
 export function CreaLag() {
   return [
     sprite("gigagantrum"),
-    area(),
+    area({ collisionIgnore: ['enemy', 'moneta', 'mela'] }),
     body(),
     z(50),
     anchor("bot"),

@@ -1,4 +1,7 @@
 export function CreaScenarioEstivo() {
+  onUpdate('decorazione-schermo', (object) => {
+    if (object.pos.y > height() + 100) destroy(object)
+  })
   onUpdate('decorazione', (object) => {
     if (object.pos.x < getCamPos().x - width() - 400 || object.pos.y > height() + 100) destroy(object)
   })
@@ -28,12 +31,13 @@ export function CreaScenarioEstivo() {
     if (window.isPaused) return
     add([
       pos(rand(width() - 300, width()), 0),
+      fixed(),
       rect(4, 4),
       color(255, 255, 200),
       opacity(0.5),
       move(vec2(-1, 1), rand(100, 200)),
       z(-85),
-      "decorazione",
+      "decorazione-schermo",
     ])
   })
 

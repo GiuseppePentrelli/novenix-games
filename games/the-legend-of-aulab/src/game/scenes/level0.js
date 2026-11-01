@@ -1,5 +1,7 @@
 export function registerLevel0() {
   scene("Level_0", () => {
+    window.gamePhase = 'story'
+    window.dispatchEvent(new CustomEvent('game:phase', { detail: 'story' }))
     const bg = add([sprite("bg_salon"), pos(0, 0), fixed()])
     const scaleFactor = Math.max(width() / bg.width, height() / bg.height)
     bg.scale = vec2(scaleFactor)

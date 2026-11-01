@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { watch, onMounted } from 'vue'
+import { watch, onMounted, onUnmounted } from 'vue'
 import { useGameStore } from './store/game'
 import { initKaplay, startGame, stopGame } from './game/kaplay.js'
 
@@ -43,25 +43,28 @@ watch(() => store.playerName, (name) => {
   window.nomeGiocatore = name
 })
 
+const events = {
+  'game:hud-update': ({ detail }) => {
+    store.lives = detail.lives
+    store.coins = detail.coins
+    store.deaths = detail.deaths
+  },
+  'game:win': ({ detail }) => {
+    store.finalCoins = detail.coins
+    store.deaths = detail.deaths ?? store.deaths
+    store.screen = 'end'
+  },
+  'game:quit': () => { store.screen = 'menu' },
+}
 onMounted(() => {
   window.nomeGiocatore = store.playerName
-
-  window.addEventListener('game:hud-update', (e) => {
-    store.lives  = e.detail.lives
-    store.coins  = e.detail.coins
-    store.deaths = e.detail.deaths
-  })
-
-  window.addEventListener('game:win', (e) => {
-    store.finalCoins = e.detail.coins
-    store.deaths     = e.detail.deaths ?? store.deaths
-    store.screen     = 'end'
-  })
-
-  window.addEventListener('game:quit', () => {
-    store.screen = 'menu'
-  })
+  for (const [name, handler] of Object.entries(events)) window.addEventListener(name, handler)
 })
+onUnmounted(() => {
+  for (const [name, handler] of Object.entries(events)) window.removeEventListener(name, handler)
+  stopGame()
+})
+
 </script>
 
 <style>

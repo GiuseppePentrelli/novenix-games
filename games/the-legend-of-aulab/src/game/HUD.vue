@@ -11,6 +11,7 @@
         {{ isPaused ? '▶' : '⏸' }}
       </button>
     </div>
+    <button v-if="phase === 'story' && !isPaused" class="skip-intro" @click="skipIntro"><span class="skip-label">SALTA STORIA</span><span class="skip-play">GIOCA SUBITO ▶</span></button>
     <transition name="fade">
       <div v-if="isPaused" class="pause-overlay">
         <div class="pause-box">
@@ -21,8 +22,11 @@
       </div>
     </transition>
     <button
+      v-if="phase === 'run'"
       class="jump-btn"
       @pointerdown.prevent.stop="emitJump"
+      @keydown.space.prevent.stop="emitJump"
+      @keydown.enter.prevent.stop="emitJump"
       aria-label="Salta"
     >⬆</button>
   </div>
@@ -34,11 +38,26 @@ import { useGameStore } from '../store/game'
 
 const store = useGameStore()
 const isPaused = ref(false)
+const phase = ref(window.gamePhase || 'story')
+function syncPhase(event) { phase.value = event.detail }
+function skipIntro() { window.dispatchEvent(new CustomEvent('hud:skip-intro')) }
 function onKey(event) {
-  if (event.key === 'Escape') togglePause()
+  if (event.key === 'Escape' && !event.repeat) {
+    event.preventDefault()
+    togglePause()
+  }
 }
-onMounted(() => window.addEventListener('keydown', onKey))
-onUnmounted(() => window.removeEventListener('keydown', onKey))
+function syncPause(event) { isPaused.value = event.detail }
+onMounted(() => {
+  window.addEventListener('keydown', onKey)
+  window.addEventListener('game:pause', syncPause)
+  window.addEventListener('game:phase', syncPhase)
+})
+onUnmounted(() => {
+  window.removeEventListener('keydown', onKey)
+  window.removeEventListener('game:pause', syncPause)
+  window.removeEventListener('game:phase', syncPhase)
+})
 
 function togglePause() {
   isPaused.value = !isPaused.value
@@ -128,6 +147,28 @@ function emitJump() {
 .pmenu-btn.danger { border-color: #aa3333; }
 .pmenu-btn.danger:hover { background: #4a1515; }
 
+.skip-intro {
+  position: absolute;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  right: max(24px, env(safe-area-inset-right));
+  display: grid;
+  gap: 6px;
+  min-height: 64px;
+  padding: 12px 22px;
+  background: #ffd700;
+  border: 3px solid #fff3a3;
+  border-radius: 0;
+  box-shadow: 5px 5px 0 #655016;
+  color: #0a0f28;
+  font-family: monospace;
+  cursor: pointer;
+  pointer-events: all;
+  touch-action: manipulation;
+}
+.skip-label { font-size: 11px; letter-spacing: 2px; }
+.skip-play { font-size: 17px; font-weight: bold; }
+.skip-intro:hover { background: #fff078; }
+.skip-intro:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 #655016; }
 .jump-btn {
   position: absolute;
   bottom: 2rem;

@@ -12,3 +12,6 @@ for (const game of games.filter(game => game.status === 'playable')) {
   await mkdir(destination, { recursive: true })
   await cp(resolve(folder, 'dist'), destination, { recursive: true })
 }
+
+await cp(resolve(root, 'licenses'), resolve(root, 'dist/licenses'), { recursive: true })
+await cp(resolve(root, 'CREDITS.md'), resolve(root, 'dist/CREDITS.md'))

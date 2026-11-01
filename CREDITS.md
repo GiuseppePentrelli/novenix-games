@@ -4,7 +4,7 @@
 
 Cabinati, anteprima a pixel, icona e decorazioni sono disegnati nel codice del progetto. Non utilizzano grafiche di giochi o marchi esistenti. Il codice del progetto non riceve automaticamente una licenza di redistribuzione da questa nota.
 
-Il font previsto è **Press Start 2P**, Copyright 2012 The Press Start 2P Project Authors, SIL Open Font License 1.1, Reserved Font Name "Press Start 2P". La licenza è in `licenses/PressStart2P-OFL.txt`; fonte ufficiale: https://github.com/google/fonts/tree/main/ofl/pressstart2p. Il file `public/fonts/PressStart2P-Regular.ttf` deve ancora essere scaricato: la rete dell'ambiente di lavoro non è disponibile. La versione attuale usa il fallback monospace finché il font manca.
+Il font è **Press Start 2P**, Copyright 2012 The Press Start 2P Project Authors, SIL Open Font License 1.1, Reserved Font Name "Press Start 2P". La licenza è in `licenses/PressStart2P-OFL.txt`; fonte ufficiale: https://github.com/google/fonts/tree/main/ofl/pressstart2p. Il font è ospitato localmente in `public/fonts/PressStart2P-Regular.ttf`: non viene richiesto a Google Fonts durante la visita.
 
 ## The Legend of Aulab
 
@@ -21,4 +21,11 @@ Il gioco proviene dalla copia locale di Giuseppe `~/dev/da-controllare/TheLegend
 
 I file elencati sono in `games/the-legend-of-aulab/public/sprites/` e `sounds/`. Il controllo visivo di `pog`, `karat`, `marks_legend`, `bg_salon` e `streetNight` non ha identificato asset Nintendo/Zelda, ma non certifica l'originalità degli altri file. Il titolo e i dialoghi citano Aulab; la schermata finale riproduce un attestato fittizio con il nome Aulab scritto in testo. Non è stata verificata alcuna autorizzazione del marchio. Non c'è un logo Aulab separato fra gli asset mantenuti.
 
-Vue, Pinia, Vite e KAPLAY restano soggetti alle rispettive licenze distribuite con i pacchetti. Il download delle dipendenze è ancora da completare; l'inventario delle licenze effettivamente installate e degli eventuali asset interni di KAPLAY va verificato dopo l'installazione.
+Le dipendenze installate sono elencate qui sotto. Le relative licenze complete sono conservate in `licenses/`; KAPLAY include anche risorse interne, le cui attribuzioni vanno mantenute come distribuite nel pacchetto.
+
+
+- vue 3.5.44: MIT (https://vuejs.org/).
+- pinia 3.0.4: MIT (https://pinia.vuejs.org).
+- vite 8.3.5: MIT (https://vite.dev).
+- @vitejs/plugin-vue 6.0.10: MIT (https://github.com/vitejs/vite-plugin-vue/tree/main/packages/plugin-vue#readme).
+- kaplay 3001.0.19: il manifest dichiara MIT, ma il file LICENSE.md distribuito aggiunge restrizioni sull’uso per addestrare sistemi di apprendimento automatico; testo completo in `licenses/kaplay-LICENSE.txt` (https://kaplayjs.com/).

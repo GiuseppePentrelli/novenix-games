@@ -1,6 +1,6 @@
 import { compileLevel, TILE_SIZE } from './level-data.js'
 import { CreaBug, CreaGlitch, CreaLag } from './objects/enemies.js'
-import { CreaMinus } from './objects/platforms.js'
+import { CreaMinus, CreaPrato } from './objects/platforms.js'
 
 export function createLevelStream(originY) {
   const plan = compileLevel()
@@ -13,9 +13,7 @@ export function createLevelStream(originY) {
     const y = originY + tile.y
     let components
     switch (tile.symbol) {
-      case '=':
-        components = [sprite('grass', { width: tileWidth, height: TILE_SIZE, tiled: true }), area(), body({ isStatic: true }), anchor('bot'), 'pavimento']
-        break
+      case '=': components = CreaPrato(tileWidth); break
       case '-': components = CreaMinus(tileWidth); break
       case '^': components = CreaBug(); break
       case '%': components = CreaGlitch(); break

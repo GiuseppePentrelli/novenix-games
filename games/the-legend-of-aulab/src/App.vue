@@ -16,6 +16,7 @@
 import { watch, onMounted, onUnmounted } from 'vue'
 import { useGameStore } from './store/game'
 import { initKaplay, startGame, stopGame } from './game/kaplay.js'
+import { playMenuMusic } from './menu-music.js'
 
 import HUD            from './game/HUD.vue'
 import StartScreen    from './screens/StartScreen.vue'
@@ -27,6 +28,7 @@ import EndScreen      from './screens/EndScreen.vue'
 const store = useGameStore()
 
 watch(() => store.screen, (val) => {
+  if (['name', 'menu', 'difficulty'].includes(val)) playMenuMusic()
   if (val === 'game') {
     initKaplay()
     store.resetRun()

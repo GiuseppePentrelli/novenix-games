@@ -17,7 +17,7 @@ Il gioco proviene dalla copia locale di Giuseppe `~/dev/da-controllare/TheLegend
 | `pog`, `karat`, `beantle`, `gigagantrum`, `ghosty`, `apple`, `coin`, `grass`, `minus`, `sun`, `marks_legend`, `sparkling` | Autori, fonte originale e licenza da identificare. Alcuni nomi richiamano le risorse dimostrative di Kaboom/KAPLAY, ma non è stato verificato il confronto dei file. |
 | `valerio`, `francesco`, `nicola`, `matteo` | Giuseppe ricorda una licenza libera; fonte e condizioni esatte da ricostruire. |
 | `bg_salon`, `streetNight` | Giuseppe ricorda una licenza libera; fonte e condizioni esatte da ricostruire. Non è possibile dedurle dall'aspetto. |
-| `MusicaMenuPrincipale`, `caduta`, `coinSound`, `eatApple`, `ouch`, `win`, `GameOver` | Giuseppe ricorda una licenza libera; fonte, compositore e condizioni esatte da ricostruire; nessun riconoscimento audio completato. |
+| `MusicaMenuPrincipale`, `Intro`, `caduta`, `coinSound`, `eatApple`, `ouch`, `win`, `GameOver` | Giuseppe ricorda una licenza libera; fonte, compositore e condizioni esatte da ricostruire; nessun riconoscimento audio completato. |
 
 I file elencati sono in `games/the-legend-of-aulab/public/sprites/` e `sounds/`. Il controllo visivo di `pog`, `karat`, `marks_legend`, `bg_salon` e `streetNight` non ha identificato asset Nintendo/Zelda, ma non certifica l'originalità degli altri file. Il titolo e i dialoghi citano Aulab; la schermata finale riproduce un attestato fittizio con il nome Aulab scritto in testo. Non è stata verificata alcuna autorizzazione del marchio. Non c'è un logo Aulab separato fra gli asset mantenuti.
 

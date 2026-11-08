@@ -3,6 +3,7 @@ import { createLevelStream } from '../level-stream.js'
 import { LEVEL_ROWS, TILE_SIZE } from '../level-data.js'
 import { CreaScenarioEstivo } from '../objects/scenario.js'
 import { Salto } from '../objects/jump.js'
+import { stopMenuMusic } from '../../menu-music.js'
 
 let morteCount = 0
 
@@ -15,7 +16,7 @@ export function registerLevel1() {
 
     const cfg = window.gameConfig || { speed: 400, lives: 3 }
 
-    if (window.MenuMusic) { window.MenuMusic.stop(); window.MenuMusic = null }
+    stopMenuMusic()
     const musica = play("MusicaMenuPrincipale", { loop: true, volume: 0.5 })
     window.isPaused = false
 

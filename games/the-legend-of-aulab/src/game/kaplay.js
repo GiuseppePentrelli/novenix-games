@@ -4,14 +4,17 @@ import { registerLevel0 } from './scenes/level0.js'
 import { registerArrivoDocenti } from './scenes/arrivoDocenti.js'
 import { registerTutorial } from './scenes/tutorial.js'
 import { registerLevel1, resetDeathCount } from './scenes/level1.js'
+import { pauseMenuMusic } from '../menu-music.js'
 
 let initialized = false
 let playing = false
+let startToken = 0
 
 function pauseGame(paused) {
   if (!playing) return
   window.isPaused = paused
   getTreeRoot().paused = paused
+  pauseMenuMusic(paused)
   window.dispatchEvent(new CustomEvent('game:pause', { detail: paused }))
 }
 
@@ -64,7 +67,8 @@ export function startGame(config) {
   window.gameConfig = config
   window.isPaused = false
   getTreeRoot().paused = false
-  go("Level_0")
+  const token = ++startToken
+  onLoad(() => { if (playing && token === startToken) go("Level_0") })
 }
 
 export function stopGame() {

@@ -193,3 +193,43 @@ test('il comando DOM salta subito e i listener vengono rimossi quando esci dal l
     }
   }
 })
+
+test('prato e piattaforme vengono disegnati esattamente sopra la loro collisione', async () => {
+  const { CreaPrato, CreaMinus } = await import('../src/game/objects/platforms.js')
+  const keys = ['drawSprite', 'vec2', 'Rect', 'area', 'body', 'anchor']
+  const saved = new Map(keys.map(key => [key, Object.getOwnPropertyDescriptor(globalThis, key)]))
+  try {
+    const drawn = []
+    globalThis.drawSprite = options => drawn.push(options)
+    globalThis.vec2 = (x = 0, y = x) => ({ x, y })
+    globalThis.Rect = class { constructor(pos, width, height) { Object.assign(this, { pos, width, height }) } }
+    for (const key of ['area', 'body', 'anchor']) globalThis[key] = (...args) => ({ id: key, args })
+    for (const [create, count] of [[CreaPrato, 1], [CreaPrato, 8], [CreaMinus, 1], [CreaMinus, 8]]) {
+      drawn.length = 0
+      const components = create(count * TILE_SIZE)
+      components.find(component => component?.id === 'tileRow').draw()
+      assert.equal(drawn.length, count)
+      assert.ok(drawn.every(options => !options.tiled && !options.anchor))
+      const left = Math.min(...drawn.map(options => options.pos.x))
+      const right = Math.max(...drawn.map(options => options.pos.x)) + TILE_SIZE
+      const top = Math.min(...drawn.map(options => options.pos.y))
+      const { shape, offset = { x: 0, y: 0 } } = components.find(component => component?.id === 'area').args[0]
+      assert.equal(components.find(component => component?.id === 'anchor').args[0], 'bot')
+      const box = {
+        left: shape.pos.x + offset.x - shape.width / 2,
+        top: shape.pos.y + offset.y - shape.height,
+      }
+      box.right = box.left + shape.width
+      box.bottom = box.top + shape.height
+      assert.deepEqual([left, right], [box.left, box.right])
+      assert.equal(top, -TILE_SIZE)
+      assert.ok(box.top >= top && box.bottom <= 0)
+      if (create === CreaPrato) assert.deepEqual([box.top, box.bottom], [-TILE_SIZE, 0])
+    }
+  } finally {
+    for (const [key, descriptor] of saved) {
+      if (descriptor) Object.defineProperty(globalThis, key, descriptor)
+      else delete globalThis[key]
+    }
+  }
+})

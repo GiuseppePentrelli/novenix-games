@@ -59,7 +59,7 @@ export default function ActionCard({ action, reveal = true, autoReveal = false }
           </div>
 
           <div className="relative text-xs uppercase tracking-widest text-[color:var(--color-parchment-dim)]">
-            ✓ successo +{action.reward}
+            voto dell'Officiante: 0–3
           </div>
         </div>
       </div>

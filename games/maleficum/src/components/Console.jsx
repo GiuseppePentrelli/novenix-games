@@ -2,13 +2,22 @@ import { useState } from 'react'
 import { CATEGORIES } from '../game/deck.js'
 import { CAST_COST, denounceReward, purifyCost } from '../game/rules.js'
 import ActionCard from './ActionCard.jsx'
+import ActionTimer, { secondsIn } from './ActionTimer.jsx'
 import CastModal from './CastModal.jsx'
+import CurseReveal from './CurseReveal.jsx'
 import DenounceModal from './DenounceModal.jsx'
 import GrimoireLog from './GrimoireLog.jsx'
 import HelpOverlay from './HelpOverlay.jsx'
 import SalaLink from './SalaLink.jsx'
 import SurvivalBar from './SurvivalBar.jsx'
 import TurnAnnounce from './TurnAnnounce.jsx'
+
+const VOTES = [
+  [0, 'Fallita'],
+  [1, 'Sufficiente'],
+  [2, 'Buona'],
+  [3, 'Memorabile'],
+]
 
 const headerBtn =
   'h-9 min-w-9 px-2.5 rounded-full border border-[color:var(--color-ash)] text-sm text-[color:var(--color-parchment-dim)] hover:text-hex-glow hover:border-[color:var(--color-hex)] transition-colors disabled:opacity-30 disabled:pointer-events-none'
@@ -32,6 +41,13 @@ export default function Console({ state, dispatch, undo, canUndo }) {
   const seating = state.turnOrder.map((id) => state.players[id])
   const action = state.currentAction?.action
   const canCast = turnPlayer && turnPlayer.points >= CAST_COST
+  const { goal, round } = state
+  const goalText =
+    goal.type === 'rounds'
+      ? `Giro ${round} di ${goal.value}`
+      : goal.type === 'points'
+        ? `Giro ${round} · a ${goal.value} punti`
+        : `Giro ${round}`
 
   if (!turnPlayer) return null
 
@@ -39,8 +55,10 @@ export default function Console({ state, dispatch, undo, canUndo }) {
     <div className="min-h-svh flex flex-col pb-10">
       <header className="sticky top-0 z-20 flex items-center gap-2 px-3 py-2.5 border-b border-[color:var(--color-ash)] bg-[color:var(--color-abyss)]/90 backdrop-blur">
         <SalaLink />
-        <span className="hidden sm:inline mx-auto font-grimoire text-hex-glow tracking-widest">Maleficum</span>
-        <div className="ml-auto sm:ml-0 flex items-center gap-1.5">
+        <span className="mx-auto text-center text-[11px] leading-tight uppercase tracking-widest text-[color:var(--color-ember)]">
+          {goalText}
+        </span>
+        <div className="flex items-center gap-1.5">
           <button className={headerBtn} onClick={undo} disabled={!canUndo} title="Annulla l'ultima mossa">
             ↶ <span className="hidden sm:inline">Annulla</span>
           </button>
@@ -83,19 +101,23 @@ export default function Console({ state, dispatch, undo, canUndo }) {
             {action ? (
               <div className="flex flex-col items-center gap-4 mt-4">
                 <ActionCard action={action} reveal autoReveal={false} />
-                <div className="flex gap-3 w-full max-w-[340px]">
-                  <button
-                    className="sigil-btn !py-3 text-base flex-1"
-                    onClick={() => dispatch({ type: 'ACTION_RESOLVE', success: false })}
-                  >
-                    ✗ Fallita
-                  </button>
-                  <button
-                    className="sigil-btn blood !py-3 text-base flex-1 flicker"
-                    onClick={() => dispatch({ type: 'ACTION_RESOLVE', success: true })}
-                  >
-                    ✓ Riuscita (+{action.reward})
-                  </button>
+                <ActionTimer key={state.currentAction.instanceId} seconds={secondsIn(action.text)} />
+                <div className="w-full max-w-[340px]">
+                  <p className="text-xs uppercase tracking-widest text-center text-[color:var(--color-parchment-dim)] mb-2">
+                    Il tuo voto alla prova
+                  </p>
+                  <div className="grid grid-cols-4 gap-2">
+                    {VOTES.map(([score, label]) => (
+                      <button
+                        key={score}
+                        className={`sigil-btn !px-1 !py-2.5 flex flex-col items-center gap-0.5 ${score === 3 ? 'blood' : ''}`}
+                        onClick={() => dispatch({ type: 'ACTION_RESOLVE', score })}
+                      >
+                        <span className="font-grimoire text-2xl leading-none">{score === 0 ? '✗' : `+${score}`}</span>
+                        <span className="text-[9px] tracking-wider normal-case">{label}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 <div className="flex gap-3 w-full max-w-[340px]">
                   <button
@@ -114,7 +136,7 @@ export default function Console({ state, dispatch, undo, canUndo }) {
                   </button>
                 </div>
                 <p className="text-xs text-center font-body italic text-[color:var(--color-parchment-dim)] max-w-[340px]">
-                  Prima del giudizio, {turnPlayer.name} può scagliare una maledizione. Poi giudica la prova: il turno passa al prossimo.
+                  Se vuole, {turnPlayer.name} scaglia prima della prova. Poi dai il voto: il turno passa al prossimo.
                 </p>
               </div>
             ) : (
@@ -311,6 +333,14 @@ export default function Console({ state, dispatch, undo, canUndo }) {
         </div>
       )}
       {showHelp && <HelpOverlay onClose={() => setShowHelp(false)} />}
+      {state.reveal && (
+        <CurseReveal
+          reveal={state.reveal}
+          state={state}
+          onResolve={(payload) => dispatch({ type: 'RESOLVE_INSTANT', ...payload })}
+          onDismiss={() => dispatch({ type: 'DISMISS_REVEAL' })}
+        />
+      )}
       <TurnAnnounce state={state} />
     </div>
   )

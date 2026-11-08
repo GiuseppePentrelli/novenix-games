@@ -1,13 +1,19 @@
 import { useCallback, useEffect, useState } from 'react'
-import { createInitialState, gameReducer } from './state.js'
+import { createInitialState, gameReducer, STATE_VERSION } from './state.js'
 
 const STORAGE_KEY = 'maleficum:rito'
 const UNDO_LIMIT = 50
+// Azioni che cambiano solo ciò che si vede: non occupano un passo di «Annulla».
+const QUIET = new Set(['DISMISS_REVEAL'])
 
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY))
-    if (saved && ['setup', 'playing', 'ended'].includes(saved.phase) && saved.players) return saved
+    if (saved?.version === STATE_VERSION && ['setup', 'playing', 'ended'].includes(saved.phase)) return saved
+    if (saved?.players) {
+      const names = saved.lastNames?.length ? saved.lastNames : Object.values(saved.players).map((p) => p.name)
+      return createInitialState(names)
+    }
   } catch {}
   return createInitialState()
 }
@@ -26,6 +32,7 @@ export function useGame() {
       const next = gameReducer(h.present, action)
       if (next === h.present) return h
       if (action.type === 'RESET') return { past: [], present: next }
+      if (QUIET.has(action.type)) return { ...h, present: next }
       return { past: [...h.past.slice(-(UNDO_LIMIT - 1)), h.present], present: next }
     })
   }, [])

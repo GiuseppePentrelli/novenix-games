@@ -1,17 +1,31 @@
 import { useState } from 'react'
 import { MAX_PLAYERS, MIN_PLAYERS } from '../game/state.js'
-import { START_POINTS } from '../game/rules.js'
+import { DEFAULT_GOAL, GOALS, START_POINTS } from '../game/rules.js'
 import HelpOverlay from './HelpOverlay.jsx'
 import SalaLink from './SalaLink.jsx'
 
 const placeholder = (i) => `Anima ${i + 1}`
 
+const GOAL_OPTIONS = [
+  ...GOALS.rounds.map((value) => ({ type: 'rounds', value, label: `${value} giri` })),
+  ...GOALS.points.map((value) => ({ type: 'points', value, label: `${value} punti` })),
+  { type: 'free', value: null, label: 'Libero' },
+]
+
+const goalHint = (goal) =>
+  goal.type === 'rounds'
+    ? `Il rito finisce dopo ${goal.value} giri completi del tavolo.`
+    : goal.type === 'points'
+      ? `Il rito finisce alla fine del turno in cui qualcuno arriva a ${goal.value} punti.`
+      : 'Il rito finisce quando lo decidi tu.'
+
 // L'Officiante sceglie quante anime entrano nel cerchio e come si chiamano.
-export default function Setup({ lastNames, onStart }) {
+export default function Setup({ lastNames, goal: lastGoal, onStart }) {
   const [names, setNames] = useState(() =>
     lastNames?.length >= MIN_PLAYERS ? [...lastNames] : Array(4).fill('')
   )
   const [showHelp, setShowHelp] = useState(false)
+  const [goal, setGoal] = useState(lastGoal ?? DEFAULT_GOAL)
 
   const setCount = (count) =>
     setNames((prev) =>
@@ -89,13 +103,35 @@ export default function Setup({ lastNames, onStart }) {
           ))}
         </ol>
 
+        <div>
+          <span className="block text-xs uppercase tracking-widest text-[color:var(--color-parchment-dim)] mb-2">
+            Durata del rito
+          </span>
+          <div className="grid grid-cols-4 gap-2">
+            {GOAL_OPTIONS.map((option) => {
+              const active = option.type === goal.type && option.value === (goal.value ?? null)
+              return (
+                <button
+                  key={option.label}
+                  onClick={() => setGoal({ type: option.type, value: option.value })}
+                  aria-pressed={active}
+                  className={`sigil-btn !px-1 !py-2 text-xs ${active ? '!border-[color:var(--color-hex)] text-hex-glow' : ''}`}
+                >
+                  {option.label}
+                </button>
+              )
+            })}
+          </div>
+          <p className="text-xs font-body italic text-[color:var(--color-parchment-dim)] mt-2">{goalHint(goal)}</p>
+        </div>
+
         <p className="text-xs text-center font-body text-[color:var(--color-parchment-dim)]">
           Ogni anima parte da {START_POINTS} punti. I dadi decidono l'ordine dei turni.
         </p>
 
         <button
           className="sigil-btn blood text-lg flicker"
-          onClick={() => onStart(names.map((name, i) => name.trim() || placeholder(i)))}
+          onClick={() => onStart(names.map((name, i) => name.trim() || placeholder(i)), goal.type === 'free' ? { type: 'free' } : goal)}
         >
           🎲 Tira i dadi e inizia il rito
         </button>

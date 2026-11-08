@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { CATEGORIES } from '../game/deck.js'
-import { denounceReward } from '../game/rules.js'
+import { casterReward, denounceReward } from '../game/rules.js'
 
 // L'Officiante indica chi ha smascherato la vittima e decide subito l'esito.
 export default function DenounceModal({ curse, players, onResolve, onClose }) {
@@ -9,6 +9,8 @@ export default function DenounceModal({ curse, players, onResolve, onClose }) {
   const accusers = Object.values(players).filter((p) => p.id !== curse.victimId)
   const stake = denounceReward(curse.curse.severity)
   const accuser = players[accuserId]
+  const caster = players[curse.casterId]
+  const bonus = casterReward(curse.curse.severity)
 
   const resolve = (approve) => {
     onResolve({ instanceId: curse.instanceId, accuserId, approve })
@@ -56,6 +58,11 @@ export default function DenounceModal({ curse, players, onResolve, onClose }) {
         </div>
 
         <div className="flex flex-col gap-2">
+          {caster && (
+            <p className="text-xs text-center font-body text-[color:var(--color-parchment-dim)]">
+              Se confermi, anche {caster.avatar} {caster.name} guadagna {bonus} per il maleficio riuscito.
+            </p>
+          )}
           <button className="sigil-btn blood text-lg" disabled={!accuser} onClick={() => resolve(true)}>
             ✅ Confermo{accuser ? `: ${accuser.name} ruba ${stake}` : ` (+${stake})`}
           </button>

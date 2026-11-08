@@ -1,44 +1,51 @@
 // ============================================================
 // MALEFICUM — Regole economiche (facili da ritoccare)
-// Bilanciate per il flusso a turni: si maledice solo nel proprio
-// turno (1 lancio a turno al massimo), quindi i punti si spendono
-// più lentamente rispetto al vecchio free-for-all in tempo reale.
+// Si maledice solo nel proprio turno e l'Officiante giudica tutto
+// da un solo telefono.
 // ============================================================
 
-// Punti di partenza di ogni anima. Alzato rispetto al vecchio 10
-// perché ora un giocatore non può più "farmare" denunce in
-// continuazione per rifinanziarsi: deve reggere più turni.
+// Punti di partenza di ogni anima.
 export const START_POINTS = 15
 
-// Costo FISSO per scagliare una maledizione (qualunque essa sia).
-// Fisso perché la gravità è casuale finché non peschi: un costo
-// variabile sarebbe imprevedibile al momento del lancio.
+// Costo FISSO per scagliare una maledizione (qualunque essa sia):
+// la gravità è casuale finché non peschi.
 export const CAST_COST = 3
 
 // Massimo di maledizioni attive contemporaneamente su una vittima.
-// Tenuto basso (era 3) per non affollare lo schermo di countdown:
-// l'obiettivo è guardarsi in faccia, non il telefono.
 export const MAX_CURSES_PER_VICTIM = 2
 
-// Turni del tavolo da sopravvivere per domare un vincolo, in base alla
-// gravità (un "turno" = ogni volta che qualcuno risolve la propria
-// azione, non solo il turno della vittima). Le maledizioni a tempo
-// (kind: 'timer') usano invece il proprio campo `turns`.
-export const SURVIVE_TURNS = { 1: 2, 2: 3, 3: 4 }
+// Giri completi del tavolo da sopravvivere per domare un vincolo, in
+// base alla gravità. Un giro = tante azioni quante sono le anime, così
+// la durata resta giusta sia in 3 sia in 10. Le maledizioni a tempo
+// (kind: 'timer') contano invece i turni del tavolo scritti sulla carta.
+export const SURVIVE_ROUNDS = { 1: 1, 2: 1.5, 3: 2 }
 
-// Punti guadagnati domando una maledizione (sopravvivendo fino in
-// fondo senza essere denunciato). Stessa scala della posta in palio
-// di una denuncia riuscita: il rischio e il premio sono simmetrici.
+// Punti guadagnati domando una maledizione senza farsi smascherare.
 export const surviveReward = (severity) => severity
 
-// Punti rubati con una denuncia riuscita (approvata dall'host) = gravità.
+// Denuncia confermata: chi smaschera ruba punti pari alla gravità e
+// chi aveva scagliato la maledizione ne guadagna altrettanti.
 export const denounceReward = (severity) => severity
+export const casterReward = (severity) => severity
 
-// Penalità per chi fa una denuncia che l'host rigetta (0 = nessuna,
-// solo filtro senza conseguenze). Alzare per scoraggiare accuse a caso.
+// Penalità per chi fa una denuncia che l'Officiante respinge.
 export const DENOUNCE_REJECT_PENALTY = 0
 
 // Costo per purificarsi da una maledizione prima della scadenza.
-// Volutamente più alto della posta di una denuncia: deve restare
-// un'opzione d'emergenza, non la via standard per liberarsi.
 export const purifyCost = (severity) => severity + 1
+
+// Voto dell'Officiante a ogni prova: 0 = fallita, 3 = memorabile.
+export const VOTE_MAX = 3
+
+// Il Vero Nome: chi non rivela il segreto perde questi punti.
+export const TRUE_NAME_PENALTY = 3
+
+// Decima di Sangue: punti che la vittima cede a chi l'ha maledetta.
+export const TITHE_POINTS = 2
+
+// Traguardi tra cui scegliere a inizio rito.
+export const GOALS = {
+  rounds: [2, 3, 4, 5],
+  points: [25, 35, 50],
+}
+export const DEFAULT_GOAL = { type: 'rounds', value: 3 }

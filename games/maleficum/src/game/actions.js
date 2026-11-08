@@ -11,7 +11,7 @@
 //  - img: null oggi, riservato a una futura illustrazione stile tarocchi
 // ============================================================
 
-import ACTIONS_DATA from './data/actions.json'
+import ACTIONS_DATA from './data/actions.json' with { type: 'json' }
 
 export const ACTION_CATEGORIES = {
   Mimica: { color: 'venom', icon: '🜃', blurb: 'Il corpo racconta ciò che la voce non può' },
@@ -21,8 +21,3 @@ export const ACTION_CATEGORIES = {
 }
 
 export const ACTIONS = ACTIONS_DATA
-
-export function drawRandomAction(category = null, rng = Math.random) {
-  const pool = category ? ACTIONS.filter((a) => a.category === category) : ACTIONS
-  return pool[Math.floor(rng() * pool.length)]
-}

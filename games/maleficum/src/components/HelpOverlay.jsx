@@ -1,4 +1,4 @@
-import { CAST_COST, MAX_CURSES_PER_VICTIM, START_POINTS } from '../game/rules.js'
+import { CAST_COST, MAX_CURSES_PER_VICTIM, START_POINTS, TITHE_POINTS, TRUE_NAME_PENALTY } from '../game/rules.js'
 
 const RULES = [
   {
@@ -9,37 +9,42 @@ const RULES = [
   {
     icon: '🎲',
     title: 'Ordine dei turni',
-    body: 'A inizio partita ognuno tira un dado: chi fa il punteggio più alto gioca per primo, a scendere. In caso di pareggio si rilancia solo tra chi ha pareggiato. L\'ordine resta fisso per tutta la partita.',
+    body: "A inizio partita ognuno tira un dado: chi fa il punteggio più alto gioca per primo, a scendere. In caso di pareggio si rilancia solo tra chi ha pareggiato. L'ordine resta fisso per tutta la partita.",
   },
   {
     icon: '🪞',
     title: 'Il tuo turno',
-    body: 'Quando tocca a te, peschi una carta azione e la esegui davanti al cerchio, rispettando anche i vincoli delle tue maledizioni attive. Non tocca a te dire se è andata bene: è sempre l\'Officiante a giudicare. Se riuscita, guadagni i punti indicati sulla carta.',
+    body: "Quando tocca a te, esegui la carta azione davanti al cerchio rispettando le tue maledizioni attive. L'Officiante dà un voto da 0 (fallita) a 3 (memorabile): sono i punti che guadagni. Le prove a tempo hanno il cronometro.",
   },
   {
     icon: '🩸',
     title: 'Scaglia',
-    body: `Puoi maledire solo nel tuo turno. Costa ${CAST_COST} punti. Dì all\'Officiante vittima e capitolo (o affidati alla sorte): il grimorio pesca una maledizione a caso e gliela impone.`,
+    body: `Puoi maledire solo nel tuo turno, prima della prova. Costa ${CAST_COST} punti. Scegli vittima e capitolo (o affidati alla sorte): il grimorio pesca una maledizione e la mostra a tutto il cerchio.`,
   },
   {
-    icon: '👁',
+    icon: '⚡',
     title: 'Sorveglia & Denuncia',
-    body: 'Se becchi qualcuno che viola la sua maledizione, denuncialo ad alta voce: conta solo la prima accusa, e l\'Officiante la giudica subito. Se la conferma, rubi punti pari alla gravità (☠) e la maledizione RESTA attiva, ma il tempo per domarla riparte da capo.',
+    body: "Se becchi qualcuno che viola la sua maledizione, denuncialo ad alta voce: conta solo la prima accusa, e l'Officiante la giudica subito. Se la conferma, rubi punti pari alla gravità (☠) e chi aveva scagliato la maledizione ne guadagna altrettanti. La maledizione RESTA attiva, ma il tempo per domarla riparte da capo.",
   },
   {
     icon: '🏵️',
     title: 'Doma',
-    body: 'Se resisti fino allo scadere del tempo senza essere denunciato con successo, hai domato il maleficio: si dissolve e guadagni punti pari alla sua gravità.',
+    body: "Le maledizioni durano giri interi del tavolo: un giro le lievi (☠), un giro e mezzo le medie (☠☠), due giri le nefaste (☠☠☠). Quelle a tempo durano i turni scritti sulla carta. Se resisti fino in fondo senza farti smascherare, la maledizione si dissolve e guadagni punti pari alla gravità.",
+  },
+  {
+    icon: '🜄',
+    title: 'Sacrificio',
+    body: `Le carte di questo capitolo agiscono subito. Decima di Sangue: la vittima cede ${TITHE_POINTS} punti a chi l'ha maledetta. Il Vero Nome: la vittima rivela un segreto imbarazzante oppure perde ${TRUE_NAME_PENALTY} punti. Contro-Maleficio: la vittima pesca una maledizione e la scaglia gratis su chi vuole.`,
   },
   {
     icon: '🧿',
     title: 'Purifica',
-    body: 'Non ce la fai? Puoi chiedere all\'Officiante di purificarti in qualunque momento, pagando punti (gravità +1), per togliere una maledizione prima del tempo.',
+    body: "Non ce la fai? Puoi chiedere all'Officiante di purificarti in qualunque momento, pagando punti (gravità +1), per togliere una maledizione prima del tempo.",
   },
   {
     icon: '⚖️',
-    title: 'Limiti',
-    body: `Parti da ${START_POINTS} punti. Finiti i punti, non puoi più maledire nel tuo turno (recuperi denunciando o completando azioni). Max ${MAX_CURSES_PER_VICTIM} maledizioni attive su una stessa vittima.`,
+    title: 'Limiti e fine',
+    body: `Parti da ${START_POINTS} punti. Senza almeno ${CAST_COST} punti non puoi maledire. Massimo ${MAX_CURSES_PER_VICTIM} maledizioni attive su una stessa vittima. Il rito finisce dopo i giri o al traguardo di punti scelti all'inizio, oppure quando l'Officiante lo chiude.`,
   },
 ]
 

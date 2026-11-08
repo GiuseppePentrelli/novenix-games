@@ -18,7 +18,13 @@ export default function App() {
   }, [state.phase])
 
   if (state.phase === 'setup') {
-    return <Setup lastNames={state.lastNames} onStart={(names) => dispatch({ type: 'START_GAME', names })} />
+    return (
+      <Setup
+        lastNames={state.lastNames}
+        goal={state.goal}
+        onStart={(names, goal) => dispatch({ type: 'START_GAME', names, goal })}
+      />
+    )
   }
 
   if (state.phase === 'ended') {

@@ -13,7 +13,7 @@
 //  - img: null oggi, riservato a una futura illustrazione stile tarocchi
 // ============================================================
 
-import CURSES_DATA from './data/curses.json'
+import CURSES_DATA from './data/curses.json' with { type: 'json' }
 
 export const CATEGORIES = {
   Favelle: {
@@ -39,11 +39,3 @@ export const CATEGORIES = {
 }
 
 export const DECK = CURSES_DATA
-
-// Punti in palio quando una maledizione viene violata (denuncia riuscita).
-export const SEVERITY_POINTS = { 1: 1, 2: 2, 3: 3 }
-
-export function drawRandom(category = null, rng = Math.random) {
-  const pool = category ? DECK.filter((c) => c.category === category) : DECK
-  return pool[Math.floor(rng() * pool.length)]
-}

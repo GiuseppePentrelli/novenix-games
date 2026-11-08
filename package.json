@@ -10,7 +10,7 @@
     "dev": "node scripts/dev.mjs",
     "build": "node scripts/build.mjs",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "node --test --test-isolation=none games/the-legend-of-aulab/tests/*.test.js"
+    "test": "node --test --test-isolation=none games/the-legend-of-aulab/tests/*.test.js games/maleficum/tests/*.test.js"
   },
   "devDependencies": {
     "vite": "^8.0.0",

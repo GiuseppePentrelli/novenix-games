@@ -1,12 +1,63 @@
 [
   {
     "slug": "the-legend-of-aulab",
+    "category": "arcade",
     "title": "The Legend of Aulab",
     "description": "Da un lavoro senza fine a un'avventura nel codice. Schiva i bug, raccogli monete, cambia il tuo destino.",
     "genre": "STORY / RUNNER",
     "controls": "SPAZIO / ↑ per saltare · mouse o tocco",
     "status": "playable"
   },
-  { "slug": "slot-02", "title": "Prossima avventura", "status": "coming-soon" },
-  { "slug": "slot-03", "title": "Un nuovo mondo", "status": "coming-soon" }
+  {"slug": "slot-02", "category": "arcade", "title": "Prossima avventura", "status": "coming-soon"},
+  {"slug": "slot-03", "category": "arcade", "title": "Un nuovo mondo", "status": "coming-soon"},
+  {
+    "slug": "maleficum",
+    "category": "party",
+    "title": "Maleficum",
+    "description": "Scaglia maledizioni agli amici, supera prove di corpo e voce e domale prima che qualcuno ti denunci.",
+    "genre": "PARTY · ONLINE",
+    "players": "GRUPPO",
+    "tile": "square",
+    "status": "playable"
+  },
+  {
+    "slug": "indovina-chi",
+    "category": "party",
+    "title": "Indovina Chi?",
+    "description": "Domande sì o no per scoprire il personaggio segreto. Sfida un amico in tempo reale o il computer.",
+    "genre": "DEDUZIONE · ONLINE",
+    "players": "1–2",
+    "tile": "square",
+    "status": "playable"
+  },
+  {
+    "slug": "top-10",
+    "category": "party",
+    "title": "Top 10",
+    "description": "Indovina la classifica casella per casella, con un host che assegna i punti o lasciando controllare al gioco.",
+    "genre": "QUIZ · A SQUADRE",
+    "players": "2 SQUADRE",
+    "tile": "square",
+    "status": "playable"
+  },
+  {
+    "slug": "undercover",
+    "category": "party",
+    "title": "UnderCover",
+    "description": "C'è un infiltrato tra voi: fate domande, raccogliete indizi e smascheratelo prima che scappi.",
+    "genre": "DEDUZIONE · ONLINE",
+    "players": "3+",
+    "tile": "square",
+    "status": "playable"
+  },
+  {
+    "slug": "hot-potato",
+    "category": "party",
+    "title": "Parola a Tempo",
+    "description": "Categoria e lettera: di' una parola e passa la patata prima che scoppi. A ogni passaggio il tempo si accorcia.",
+    "genre": "PARTY · STESSO TELEFONO",
+    "players": "2–12",
+    "tile": "wide",
+    "status": "playable"
+  }
 ]

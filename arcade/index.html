@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#080d27">
+    <meta name="description" content="La sala arcade di Novenix: cabinati originali, pixel e una moneta immaginaria. Si gioca gratis.">
+    <link rel="icon" type="image/svg+xml" href="%BASE_URL%icon.svg">
+    <link rel="apple-touch-icon" href="%BASE_URL%icon-192.png">
+    <link rel="manifest" href="%BASE_URL%manifest.webmanifest">
+    <title>Arcade · Sala giochi Novenix</title>
+  </head>
+  <body>
+    <a class="skip" href="#cabinati">Salta ai giochi</a>
+    <header class="topbar"><a href="%BASE_URL%">← SALA GIOCHI</a><span class="top-status"><i></i> ARCADE SYSTEM ONLINE</span><span>HI-SCORE <b>099999</b></span></header>
+    <main>
+      <section class="hero" aria-labelledby="title">
+        <p class="eyebrow">NOVENIX ENTERTAINMENT SYSTEM</p>
+        <div class="marquee"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span><p class="hero-stars" aria-hidden="true">✦ <span>✦</span> ✦</p><h1 id="title">SALA<span>ARCADE</span></h1><p class="marquee-sub">INSERT COIN. PRESS START.</p></div>
+        <p class="intro">Cabinati a pixel, una moneta immaginaria e nessuna fila.</p>
+        <a class="press-start" href="#cabinati"><span aria-hidden="true">▶</span> PRESS START <span aria-hidden="true">◀</span></a>
+      </section>
+      <section class="arcade" id="cabinati" aria-label="Scegli un gioco">
+        <div class="section-label"><h2>CHOOSE YOUR GAME</h2><span>01 / 03 READY</span></div>
+        <div class="cabinets" id="games"></div>
+      </section>
+      <aside class="rules"><span class="coin-pixel" aria-hidden="true">N</span><div><h2>QUI LE MONETE SONO IMMAGINARIE.</h2><p>Le avventure, invece, sono tutte da giocare. Scegli un cabinato e parti.</p></div><span class="free-play">FREE<br>PLAY</span></aside>
+    </main>
+    <footer><span>NOVENIX © <span id="year"></span> · BUILT TO PLAY</span><span><a href="%BASE_URL%CREDITS.md">CREDITI</a> · NO COINS NEEDED <b aria-hidden="true">✦</b></span></footer>
+    <script type="module" src="/src/arcade.js"></script>
+  </body>
+</html>

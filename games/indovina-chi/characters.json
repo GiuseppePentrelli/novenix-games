@@ -1,0 +1,242 @@
+[
+  {
+    "id": 1,
+    "nome": "Leo",
+    "img": "characters/Leo.png",
+    "genere": "M",
+    "capelli": "castani",
+    "barba": true,
+    "occhiali": false,
+    "cappello": false
+  },
+  {
+    "id": 2,
+    "nome": "Sofia",
+    "img": "characters/Sofia.png",
+    "genere": "F",
+    "capelli": "biondi",
+    "barba": false,
+    "occhiali": true,
+    "cappello": false
+  },
+  {
+    "id": 3,
+    "nome": "Marco",
+    "img": "characters/Marco.png",
+    "genere": "M",
+    "capelli": "neri",
+    "barba": false,
+    "occhiali": false,
+    "cappello": true
+  },
+  {
+    "id": 4,
+    "nome": "Elena",
+    "img": "characters/Elena.png",
+    "genere": "F",
+    "capelli": "rossi",
+    "barba": false,
+    "occhiali": false,
+    "cappello": true
+  },
+  {
+    "id": 5,
+    "nome": "Alessandro",
+    "img": "characters/Alessandro.png",
+    "genere": "M",
+    "capelli": "calvo",
+    "barba": true,
+    "occhiali": true,
+    "cappello": false
+  },
+  {
+    "id": 6,
+    "nome": "Roberta",
+    "img": "characters/Roberta.png",
+    "genere": "F",
+    "capelli": "castani",
+    "barba": false,
+    "occhiali": true,
+    "cappello": true
+  },
+  {
+    "id": 7,
+    "nome": "Giuseppe",
+    "img": "characters/Giuseppe.png",
+    "genere": "M",
+    "capelli": "biondi",
+    "barba": false,
+    "occhiali": true,
+    "cappello": false
+  },
+  {
+    "id": 8,
+    "nome": "Beatrice",
+    "img": "characters/Beatrice.png",
+    "genere": "F",
+    "capelli": "neri",
+    "barba": false,
+    "occhiali": false,
+    "cappello": false
+  },
+  {
+    "id": 9,
+    "nome": "Matteo",
+    "img": "characters/Matteo.png",
+    "genere": "M",
+    "capelli": "rossi",
+    "barba": true,
+    "occhiali": false,
+    "cappello": false
+  },
+  {
+    "id": 10,
+    "nome": "Alice",
+    "img": "characters/Alice.png",
+    "genere": "F",
+    "capelli": "bianchi",
+    "barba": false,
+    "occhiali": true,
+    "cappello": false
+  },
+  {
+    "id": 11,
+    "nome": "Davide",
+    "img": "characters/Davide.png",
+    "genere": "M",
+    "capelli": "castani",
+    "barba": true,
+    "occhiali": false,
+    "cappello": true
+  },
+  {
+    "id": 12,
+    "nome": "Giorgia",
+    "img": "characters/Giorgia.png",
+    "genere": "F",
+    "capelli": "biondi",
+    "barba": false,
+    "occhiali": false,
+    "cappello": true
+  },
+  {
+    "id": 13,
+    "nome": "Luca",
+    "img": "characters/Luca.png",
+    "genere": "M",
+    "capelli": "neri",
+    "barba": false,
+    "occhiali": true,
+    "cappello": false
+  },
+  {
+    "id": 14,
+    "nome": "Martina",
+    "img": "characters/Martina.png",
+    "genere": "F",
+    "capelli": "rossi",
+    "barba": false,
+    "occhiali": true,
+    "cappello": false
+  },
+  {
+    "id": 15,
+    "nome": "Gabriele",
+    "img": "characters/Gabriele.png",
+    "genere": "M",
+    "capelli": "calvo",
+    "barba": true,
+    "occhiali": false,
+    "cappello": false
+  },
+  {
+    "id": 16,
+    "nome": "Sara",
+    "img": "characters/Sara.png",
+    "genere": "F",
+    "capelli": "castani",
+    "barba": false,
+    "occhiali": false,
+    "cappello": false
+  },
+  {
+    "id": 17,
+    "nome": "Federico",
+    "img": "characters/Federico.png",
+    "genere": "M",
+    "capelli": "biondi",
+    "barba": true,
+    "occhiali": false,
+    "cappello": true
+  },
+  {
+    "id": 18,
+    "nome": "Emma",
+    "img": "characters/Emma.png",
+    "genere": "F",
+    "capelli": "neri",
+    "barba": false,
+    "occhiali": true,
+    "cappello": true
+  },
+  {
+    "id": 19,
+    "nome": "Andrea",
+    "img": "characters/Andrea.png",
+    "genere": "M",
+    "capelli": "rossi",
+    "barba": false,
+    "occhiali": false,
+    "cappello": false
+  },
+  {
+    "id": 20,
+    "nome": "Giulia",
+    "img": "characters/Giulia.png",
+    "genere": "F",
+    "capelli": "bianchi",
+    "barba": false,
+    "occhiali": false,
+    "cappello": true
+  },
+  {
+    "id": 21,
+    "nome": "Antonio",
+    "img": "characters/Antonio.png",
+    "genere": "M",
+    "capelli": "castani",
+    "barba": false,
+    "occhiali": true,
+    "cappello": false
+  },
+  {
+    "id": 22,
+    "nome": "Francesca",
+    "img": "characters/Francesca.png",
+    "genere": "F",
+    "capelli": "biondi",
+    "barba": false,
+    "occhiali": false,
+    "cappello": false
+  },
+  {
+    "id": 23,
+    "nome": "Stefano",
+    "img": "characters/Stefano.png",
+    "genere": "M",
+    "capelli": "neri",
+    "barba": true,
+    "occhiali": true,
+    "cappello": false
+  },
+  {
+    "id": 24,
+    "nome": "Camilla",
+    "img": "characters/Camilla.png",
+    "genere": "F",
+    "capelli": "rossi",
+    "barba": false,
+    "occhiali": false,
+    "cappello": false
+  }
+]

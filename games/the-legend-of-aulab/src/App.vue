@@ -1,5 +1,5 @@
 <template>
-  <a v-if="store.screen !== 'game'" class="back-to-arcade" href="../../">← SALA GIOCHI</a>
+  <a v-if="store.screen !== 'game'" class="back-to-arcade" href="../../arcade/">← ARCADE</a>
   <HUD v-if="store.screen === 'game'" />
   <Transition name="screen">
     <StartScreen      v-if="store.screen === 'start'" />

@@ -1,0 +1,328 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Cinzel Decorative';
+  src: url('./assets/fonts/CinzelDecorative-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Cinzel Decorative';
+  src: url('./assets/fonts/CinzelDecorative-900.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Creepster';
+  src: url('./assets/fonts/Creepster-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('./assets/fonts/EBGaramond-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('./assets/fonts/EBGaramond-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ============================================================
+   MALEFICUM — Tema Grimorio (dark / horror / voodoo)
+   ============================================================ */
+
+@theme {
+  /* Palette */
+  --color-abyss: #0b0b0c; /* nero profondo di fondo */
+  --color-coal: #131216; /* grigio carbone pannelli */
+  --color-crypt: #1c1a22; /* pannello sollevato */
+  --color-ash: #2a2730; /* bordi tenui */
+
+  --color-parchment: #d9c9a3; /* pergamena antica (testo) */
+  --color-parchment-dim: #9c8f74; /* pergamena spenta */
+
+  --color-hex: #9b51e0; /* viola strega */
+  --color-hex-glow: #b57bff;
+  --color-venom: #27ae60; /* verde acido magico */
+  --color-blood: #7c1c22; /* rosso sacrificale */
+  --color-ember: #d9822b; /* brace */
+
+  /* Font */
+  --font-grimoire: 'Cinzel Decorative', serif;
+  --font-creep: 'Creepster', system-ui, cursive;
+  --font-body: 'EB Garamond', Georgia, serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: var(--color-abyss);
+  color: var(--color-parchment);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  /* Fondo del grimorio: vignettatura + trama pergamena scura */
+  background-color: var(--color-abyss);
+  background-image:
+    radial-gradient(
+      ellipse at 50% 0%,
+      rgba(155, 81, 224, 0.12),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse at 50% 120%,
+      rgba(124, 28, 34, 0.14),
+      transparent 55%
+    ),
+    radial-gradient(circle at 50% 50%, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
+  background-attachment: fixed;
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Selezione testo */
+::selection {
+  background: var(--color-hex);
+  color: var(--color-abyss);
+}
+
+/* Scrollbar stregata */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-abyss);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-ash);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-hex);
+}
+
+/* ============================================================
+   Utility custom
+   ============================================================ */
+
+/* Titoli gotici incisi */
+.font-grimoire {
+  font-family: var(--font-grimoire);
+  letter-spacing: 0.04em;
+}
+.font-creep {
+  font-family: var(--font-creep);
+  letter-spacing: 0.02em;
+}
+
+/* Bagliore rituale sul testo */
+.text-hex-glow {
+  color: var(--color-hex-glow);
+  text-shadow:
+    0 0 8px rgba(155, 81, 224, 0.7),
+    0 0 22px rgba(155, 81, 224, 0.35);
+}
+.text-venom-glow {
+  color: var(--color-venom);
+  text-shadow:
+    0 0 8px rgba(39, 174, 96, 0.6),
+    0 0 20px rgba(39, 174, 96, 0.3);
+}
+
+/* Pannello pergamena con bordi bruciati / vignettatura interna */
+.grimoire-panel {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(28, 26, 34, 0.9), rgba(11, 11, 12, 0.95));
+  border: 1px solid var(--color-ash);
+  border-radius: 14px;
+  box-shadow:
+    inset 0 0 60px rgba(0, 0, 0, 0.8),
+    inset 0 0 2px rgba(217, 201, 163, 0.15),
+    0 20px 50px -20px rgba(0, 0, 0, 0.9);
+}
+.grimoire-panel::before {
+  /* aloni bruciati agli angoli */
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  pointer-events: none;
+  background: radial-gradient(
+      120% 90% at 50% -10%,
+      transparent 60%,
+      rgba(0, 0, 0, 0.6) 100%
+    ),
+    radial-gradient(60% 60% at 8% 100%, rgba(124, 28, 34, 0.18), transparent 70%);
+}
+
+/* Sigillo: pulsante rituale che si illumina */
+.sigil-btn {
+  position: relative;
+  font-family: var(--font-grimoire);
+  letter-spacing: 0.08em;
+  color: var(--color-parchment);
+  background: linear-gradient(180deg, var(--color-crypt), var(--color-coal));
+  border: 1px solid var(--color-ash);
+  border-radius: 10px;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition:
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.08s ease,
+    color 0.25s ease;
+  box-shadow: inset 0 1px 0 rgba(217, 201, 163, 0.06);
+}
+.sigil-btn:hover:not(:disabled) {
+  color: var(--color-hex-glow);
+  border-color: var(--color-hex);
+  box-shadow:
+    0 0 18px rgba(155, 81, 224, 0.45),
+    inset 0 0 18px rgba(155, 81, 224, 0.18);
+}
+.sigil-btn:active:not(:disabled) {
+  transform: translateY(1px) scale(0.99);
+}
+.sigil-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Variante venefica (verde) e sanguigna (denuncia) */
+.sigil-btn.venom:hover:not(:disabled) {
+  color: var(--color-venom);
+  border-color: var(--color-venom);
+  box-shadow:
+    0 0 18px rgba(39, 174, 96, 0.45),
+    inset 0 0 18px rgba(39, 174, 96, 0.18);
+}
+.sigil-btn.blood {
+  border-color: rgba(124, 28, 34, 0.6);
+}
+.sigil-btn.blood:hover:not(:disabled) {
+  color: #ff5b63;
+  border-color: var(--color-blood);
+  box-shadow:
+    0 0 22px rgba(124, 28, 34, 0.7),
+    inset 0 0 18px rgba(124, 28, 34, 0.35);
+}
+
+/* ============================================================
+   Animazioni
+   ============================================================ */
+
+/* Candela che tremola */
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px rgba(217, 130, 43, 0.8));
+  }
+  25% {
+    opacity: 0.82;
+    filter: drop-shadow(0 0 6px rgba(217, 130, 43, 0.6));
+  }
+  50% {
+    opacity: 0.95;
+    filter: drop-shadow(0 0 14px rgba(217, 130, 43, 0.9));
+  }
+  75% {
+    opacity: 0.75;
+    filter: drop-shadow(0 0 5px rgba(217, 130, 43, 0.5));
+  }
+}
+.flicker {
+  animation: flicker 3.2s infinite ease-in-out;
+}
+
+/* Pulsazione runica */
+@keyframes rune-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+.rune-pulse {
+  animation: rune-pulse 2.6s infinite ease-in-out;
+}
+
+/* Pesca della carta: flip 3D */
+.card-3d {
+  perspective: 1400px;
+}
+.card-3d-inner {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.card-3d-inner.revealed {
+  transform: rotateY(180deg);
+}
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.card-face.back {
+  transform: rotateY(180deg);
+}
+
+/* Ingresso maledizione sullo schermo della vittima */
+@keyframes hex-strike {
+  0% {
+    transform: scale(0.6) rotate(-6deg);
+    opacity: 0;
+    filter: blur(8px);
+  }
+  60% {
+    transform: scale(1.05) rotate(1deg);
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+    opacity: 1;
+  }
+}
+.hex-strike {
+  animation: hex-strike 0.7s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flicker,
+  .rune-pulse,
+  .hex-strike,
+  .card-3d-inner {
+    animation: none !important;
+    transition: none !important;
+  }
+}

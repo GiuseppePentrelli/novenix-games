@@ -8,8 +8,10 @@ const STYLE = {
   survive: { icon: '🏵️', border: 'var(--color-ember)', text: 'var(--color-ember)' },
   revoke: { icon: '⛧', border: 'var(--color-parchment-dim)', text: 'var(--color-parchment)' },
   start: { icon: '🔮', border: 'var(--color-hex)', text: 'var(--color-hex-glow)' },
-  join: { icon: '✦', border: 'var(--color-ash)', text: 'var(--color-parchment-dim)' },
-  leave: { icon: '💨', border: 'var(--color-ash)', text: 'var(--color-parchment-dim)' },
+  'action-success': { icon: '✓', border: 'var(--color-venom)', text: 'var(--color-parchment)' },
+  'action-fail': { icon: '✗', border: 'var(--color-ash)', text: 'var(--color-parchment-dim)' },
+  'denounce-reject': { icon: '⚖', border: 'var(--color-ash)', text: 'var(--color-parchment-dim)' },
+  adjust: { icon: '±', border: 'var(--color-ember)', text: 'var(--color-parchment)' },
   info: { icon: '·', border: 'var(--color-ash)', text: 'var(--color-parchment-dim)' },
 }
 

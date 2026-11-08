@@ -2,6 +2,11 @@ import { CAST_COST, MAX_CURSES_PER_VICTIM, START_POINTS } from '../game/rules.js
 
 const RULES = [
   {
+    icon: '👁',
+    title: "L'Officiante",
+    body: "Il telefono resta in mano all'Officiante: crea il cerchio con i nomi dei giocatori, legge le carte ad alta voce, giudica ogni prova e ogni accusa e tiene i punti. Se sbaglia un tocco, può annullare l'ultima mossa.",
+  },
+  {
     icon: '🎲',
     title: 'Ordine dei turni',
     body: 'A inizio partita ognuno tira un dado: chi fa il punteggio più alto gioca per primo, a scendere. In caso di pareggio si rilancia solo tra chi ha pareggiato. L\'ordine resta fisso per tutta la partita.',
@@ -9,17 +14,17 @@ const RULES = [
   {
     icon: '🪞',
     title: 'Il tuo turno',
-    body: 'Quando tocca a te, peschi una carta azione e la esegui davanti al cerchio, rispettando anche i vincoli delle tue maledizioni attive. Non tocca a te dire se è andata bene: è sempre l\'Officiante (l\'host) a giudicare, così nessuno deve validare nulla dal telefono. Se riuscita, guadagni i punti indicati sulla carta.',
+    body: 'Quando tocca a te, peschi una carta azione e la esegui davanti al cerchio, rispettando anche i vincoli delle tue maledizioni attive. Non tocca a te dire se è andata bene: è sempre l\'Officiante a giudicare. Se riuscita, guadagni i punti indicati sulla carta.',
   },
   {
     icon: '🩸',
     title: 'Scaglia',
-    body: `Puoi maledire solo nel tuo turno. Costa ${CAST_COST} punti. Scegli vittima e capitolo (o affidati alla sorte): peschi una maledizione a caso e gliela imponi.`,
+    body: `Puoi maledire solo nel tuo turno. Costa ${CAST_COST} punti. Dì all\'Officiante vittima e capitolo (o affidati alla sorte): il grimorio pesca una maledizione a caso e gliela impone.`,
   },
   {
     icon: '👁',
     title: 'Sorveglia & Denuncia',
-    body: 'Se becchi qualcuno che viola la sua maledizione, denuncialo: solo la prima accusa conta, e resta sospesa finché l\'Officiante (l\'host) non la giudica. Se la conferma, rubi punti pari alla gravità (☠) e la maledizione RESTA attiva, ma il tempo per domarla riparte da capo.',
+    body: 'Se becchi qualcuno che viola la sua maledizione, denuncialo ad alta voce: conta solo la prima accusa, e l\'Officiante la giudica subito. Se la conferma, rubi punti pari alla gravità (☠) e la maledizione RESTA attiva, ma il tempo per domarla riparte da capo.',
   },
   {
     icon: '🏵️',
@@ -29,7 +34,7 @@ const RULES = [
   {
     icon: '🧿',
     title: 'Purifica',
-    body: 'Non ce la fai? Puoi purificarti in qualunque momento pagando punti (gravità +1) per togliere una maledizione prima del tempo.',
+    body: 'Non ce la fai? Puoi chiedere all\'Officiante di purificarti in qualunque momento, pagando punti (gravità +1), per togliere una maledizione prima del tempo.',
   },
   {
     icon: '⚖️',

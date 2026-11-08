@@ -2,14 +2,14 @@ import { useState } from 'react'
 import { CATEGORIES } from '../game/deck.js'
 import { CAST_COST, MAX_CURSES_PER_VICTIM } from '../game/rules.js'
 
-// Modale per scagliare una maledizione: scegli vittima + capitolo (o sorte).
+// Modale per scagliare una maledizione a nome di chi è di turno: vittima + capitolo (o sorte).
 export default function CastModal({ me, players, activeCurses, onCast, onClose }) {
   const [victimId, setVictimId] = useState(null)
   const [category, setCategory] = useState(null) // null = sorte casuale
 
   const canAfford = me.points >= CAST_COST
   const countOn = (id) => activeCurses.filter((c) => c.victimId === id).length
-  const targets = Object.values(players).filter((p) => p.id !== me.id && p.connected)
+  const targets = Object.values(players).filter((p) => p.id !== me.id)
 
   const victimFull = victimId ? countOn(victimId) >= MAX_CURSES_PER_VICTIM : false
   const ready = canAfford && victimId && !victimFull
@@ -24,9 +24,9 @@ export default function CastModal({ me, players, activeCurses, onCast, onClose }
         onClick={(e) => e.stopPropagation()}
       >
         <div className="text-center">
-          <h2 className="font-grimoire text-2xl text-hex-glow">Scaglia una maledizione</h2>
+          <h2 className="font-grimoire text-2xl text-hex-glow">{me.avatar} {me.name} scaglia</h2>
           <p className="text-sm font-body text-[color:var(--color-parchment-dim)]">
-            Costa <span className="text-[color:var(--color-ember)]">{CAST_COST} punti</span> · ne hai{' '}
+            Costa <span className="text-[color:var(--color-ember)]">{CAST_COST} punti</span> · ne ha{' '}
             <span className={canAfford ? 'text-hex-glow' : 'text-[color:var(--color-blood)]'}>
               {me.points}
             </span>
@@ -35,7 +35,7 @@ export default function CastModal({ me, players, activeCurses, onCast, onClose }
 
         {!canAfford && (
           <p className="text-center text-[color:var(--color-blood)] font-body text-sm">
-            ⚠ Essenza insufficiente. Denuncia qualcuno per recuperare punti.
+            ⚠ Essenza insufficiente: servono altri punti per maledire.
           </p>
         )}
 

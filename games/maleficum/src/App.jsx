@@ -1,55 +1,33 @@
 import { useEffect, useRef, useState } from 'react'
-import { usePeerRoom } from './net/usePeerRoom.js'
-import Lobby from './components/Lobby.jsx'
-import WaitingRoom from './components/WaitingRoom.jsx'
-import Table from './components/Table.jsx'
-import HostDashboard from './components/HostDashboard.jsx'
+import { useGame } from './game/useGame.js'
+import Console from './components/Console.jsx'
+import FinalRanking from './components/FinalRanking.jsx'
+import Setup from './components/Setup.jsx'
 import TurnOrderReveal from './components/TurnOrderReveal.jsx'
-import DemoView from './components/DemoView.jsx'
 
 export default function App() {
-  // Anteprima attivabile da bottone o con ?demo nell'URL.
-  const [demo, setDemo] = useState(
-    () => new URLSearchParams(window.location.search).has('demo')
-  )
-  const room = usePeerRoom()
-  const { status, error, myId, roomCode, isHost, state, hostRoom, joinRoom, leave, dispatch } = room
+  const { state, dispatch, undo, canUndo } = useGame()
 
-  // Mostra la rivelazione del dado una sola volta, appena si passa
-  // da 'lobby' a 'playing' (inizio vero e proprio della partita).
+  // Mostra la rivelazione del dado una sola volta, appena il cerchio è
+  // formato e la partita passa da 'setup' a 'playing'.
   const [showReveal, setShowReveal] = useState(false)
-  const prevPhaseRef = useRef(null)
+  const prevPhaseRef = useRef(state.phase)
   useEffect(() => {
-    if (prevPhaseRef.current === 'lobby' && state?.phase === 'playing') {
-      setShowReveal(true)
-    }
-    prevPhaseRef.current = state?.phase
-  }, [state?.phase])
+    if (prevPhaseRef.current === 'setup' && state.phase === 'playing') setShowReveal(true)
+    prevPhaseRef.current = state.phase
+  }, [state.phase])
 
-  if (demo) return <DemoView onExit={() => setDemo(false)} />
-
-  // Non ancora nel rito: schermata di connessione.
-  if (!state || status !== 'connected') {
-    return (
-      <Lobby
-        status={status}
-        error={error}
-        onHost={hostRoom}
-        onJoin={joinRoom}
-        onDemo={() => setDemo(true)}
-      />
-    )
+  if (state.phase === 'setup') {
+    return <Setup lastNames={state.lastNames} onStart={(names) => dispatch({ type: 'START_GAME', names })} />
   }
 
-  if (state.phase === 'lobby') {
+  if (state.phase === 'ended') {
     return (
-      <WaitingRoom
+      <FinalRanking
         state={state}
-        myId={myId}
-        roomCode={roomCode}
-        isHost={isHost}
-        onStart={(hostPlays) => dispatch({ type: 'START_GAME', by: myId, hostPlays })}
-        onLeave={leave}
+        canUndo={canUndo}
+        onBack={undo}
+        onNewGame={() => dispatch({ type: 'RESET' })}
       />
     )
   }
@@ -65,26 +43,5 @@ export default function App() {
     )
   }
 
-  if (isHost && !state.hostPlays) {
-    return (
-      <HostDashboard
-        state={state}
-        myId={myId}
-        roomCode={roomCode}
-        onDispatch={dispatch}
-        onLeave={leave}
-      />
-    )
-  }
-
-  return (
-    <Table
-      state={state}
-      myId={myId}
-      roomCode={roomCode}
-      isHost={isHost}
-      onDispatch={dispatch}
-      onLeave={leave}
-    />
-  )
+  return <Console state={state} dispatch={dispatch} undo={undo} canUndo={canUndo} />
 }

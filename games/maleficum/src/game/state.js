@@ -1,8 +1,8 @@
 // ============================================================
-// MALEFICUM — Stato di gioco (host-autoritativo)
-// L'host tiene lo stato ufficiale e lo ribroadcasta ad ogni
-// mutazione. I client inviano AZIONI; solo l'host le applica
-// tramite questo reducer puro.
+// MALEFICUM — Stato di gioco su un solo dispositivo
+// L'Officiante tiene il telefono: crea il cerchio, giudica le
+// azioni e le denunce, gestisce turni e punti. Ogni mossa passa
+// da questo reducer puro.
 // ============================================================
 
 import { DECK, drawRandom } from './deck.js'
@@ -18,21 +18,23 @@ import {
   purifyCost,
 } from './rules.js'
 
+export const MIN_PLAYERS = 2
+export const MAX_PLAYERS = 10
+
 const AVATARS = ['🕯️', '💀', '🦇', '🕷️', '🐍', '🐈‍⬛', '🦉', '🕸️', '⚰️', '🔮']
 
-export function createInitialState(hostId) {
+export function createInitialState(lastNames = []) {
   return {
-    phase: 'lobby', // 'lobby' | 'playing'
-    hostId,
+    phase: 'setup', // 'setup' | 'playing' | 'ended'
     players: {},
-    // { instanceId, curse, victimId, casterId, turnsSurvived, turnsNeeded, pendingDenounce }
+    // { instanceId, curse, victimId, casterId, turnsSurvived, turnsNeeded }
     activeCurses: [],
     turnOrder: [], // id dei giocatori, ordine deciso a dadi a inizio partita
     turnIndex: 0, // indice in turnOrder di chi gioca ora
     rolls: {}, // { playerId: valore del dado 1-6 }, per l'animazione di rivelazione
-    hostPlays: true, // se false, l'host fa solo l'Officiante: niente turni/maledizioni su di lui
     currentAction: null, // { instanceId, action, playerId }
     log: [],
+    lastNames,
   }
 }
 
@@ -40,13 +42,8 @@ let _seq = 0
 const uid = (p) => `${p}-${Date.now().toString(36)}-${(_seq++).toString(36)}`
 
 // I log sono tipizzati (kind) così la UI li colora e li rende leggibili.
-function logEntry(text, kind = 'info') {
-  return { id: uid('log'), ts: Date.now(), text, kind }
-}
-
-function pickAvatar(players) {
-  const used = new Set(Object.values(players).map((p) => p.avatar))
-  return AVATARS.find((a) => !used.has(a)) || AVATARS[Object.keys(players).length % AVATARS.length]
+function logEntry(text, kind = 'info', extra = {}) {
+  return { id: uid('log'), ts: Date.now(), text, kind, ...extra }
 }
 
 const activeOn = (state, victimId) =>
@@ -60,110 +57,66 @@ export function turnsToSurvive(curse) {
 
 const trimLog = (log) => log.slice(0, 80)
 
-// Reducer puro. `ctx` inietta { now, rng } per determinismo/test.
+function rollTurnOrder(ids, rng) {
+  // Si rilancia solo chi pareggia, finché ogni giocatore ha un valore univoco.
+  const rolls = {}
+  let remaining = ids
+  while (remaining.length > 0) {
+    const byValue = {}
+    for (const id of remaining) (byValue[1 + Math.floor(rng() * 6)] ||= []).push(id)
+    remaining = []
+    for (const [value, group] of Object.entries(byValue)) {
+      if (group.length > 1) remaining.push(...group)
+      else rolls[group[0]] = Number(value)
+    }
+  }
+  return { rolls, turnOrder: [...ids].sort((a, b) => rolls[b] - rolls[a]) }
+}
+
+const newAction = (playerId, rng) => {
+  const action = drawRandomAction(null, rng)
+  return action ? { instanceId: uid('action'), action, playerId } : null
+}
+
+// Reducer puro. `ctx` inietta { rng } per determinismo/test.
 export function gameReducer(state, action, ctx = {}) {
-  const now = ctx.now ?? Date.now()
   const rng = ctx.rng ?? Math.random
 
   switch (action.type) {
-    case 'JOIN': {
-      const { id, name } = action
-      if (state.players[id]) {
-        return {
-          ...state,
-          players: {
-            ...state.players,
-            [id]: { ...state.players[id], name, connected: true },
-          },
-        }
-      }
-      const player = {
-        id,
-        name: name || 'Anonimo',
-        points: START_POINTS,
-        avatar: pickAvatar(state.players),
-        connected: true,
-        isHost: id === state.hostId,
-      }
-      return {
-        ...state,
-        players: { ...state.players, [id]: player },
-        log: trimLog([
-          logEntry(`${player.avatar} ${player.name} entra nel cerchio`, 'join'),
-          ...state.log,
-        ]),
-      }
-    }
-
-    case 'DISCONNECT': {
-      const p = state.players[action.id]
-      if (!p) return state
-      return {
-        ...state,
-        players: { ...state.players, [action.id]: { ...p, connected: false } },
-        log: trimLog([
-          logEntry(`${p.avatar} ${p.name} svanisce nell'ombra`, 'leave'),
-          ...state.log,
-        ]),
-      }
-    }
-
     case 'START_GAME': {
-      if (action.by !== state.hostId) return state
-      const hostPlays = action.hostPlays !== false
-      const ids = Object.values(state.players)
-        .filter((p) => p.connected && (hostPlays || p.id !== state.hostId))
-        .map((p) => p.id)
-      if (ids.length === 0) return state
+      if (state.phase !== 'setup') return state
+      const names = action.names.map((name) => name.trim()).filter(Boolean)
+      if (names.length < MIN_PLAYERS || names.length > MAX_PLAYERS) return state
 
-      // Tiro dei dadi per decidere l'ordine: si rilancia solo chi pareggia,
-      // finché ogni giocatore ha un valore univoco.
-      const rolls = {}
-      let remaining = ids
-      while (remaining.length > 0) {
-        const thisRound = {}
-        for (const id of remaining) thisRound[id] = 1 + Math.floor(rng() * 6)
-        const byValue = {}
-        for (const id of remaining) {
-          const v = thisRound[id]
-          ;(byValue[v] ||= []).push(id)
-        }
-        remaining = []
-        for (const group of Object.values(byValue)) {
-          if (group.length > 1) remaining.push(...group) // pareggio: si rilancia
-          else rolls[group[0]] = thisRound[group[0]]
-        }
-      }
-      const turnOrder = [...ids].sort((a, b) => rolls[b] - rolls[a])
+      const players = {}
+      names.forEach((name, i) => {
+        const id = `p${i + 1}`
+        players[id] = { id, name, points: START_POINTS, avatar: AVATARS[i % AVATARS.length] }
+      })
+      const { rolls, turnOrder } = rollTurnOrder(Object.keys(players), rng)
       const rollsText = turnOrder
-        .map((id) => `${state.players[id]?.avatar} ${state.players[id]?.name} (🎲${rolls[id]})`)
+        .map((id) => `${players[id].avatar} ${players[id].name} (🎲${rolls[id]})`)
         .join(' → ')
 
-      const firstAction = drawRandomAction(null, rng)
-
       return {
-        ...state,
+        ...createInitialState(names),
         phase: 'playing',
-        hostPlays,
+        players,
         turnOrder,
-        turnIndex: 0,
         rolls,
-        currentAction: firstAction
-          ? { instanceId: uid('action'), action: firstAction, playerId: turnOrder[0] }
-          : null,
-        log: trimLog([
+        currentAction: newAction(turnOrder[0], rng),
+        log: [
           logEntry(`Ordine deciso dai dadi: ${rollsText}`, 'start'),
           logEntry('Il rito ha inizio. Che le maledizioni scendano.', 'start'),
-          ...state.log,
-        ]),
+        ],
       }
     }
 
     case 'CAST': {
+      if (state.phase !== 'playing') return state
       const caster = state.players[action.casterId]
       const victim = state.players[action.victimId]
       if (!caster || !victim || caster.id === victim.id) return state
-      if (!state.hostPlays && victim.id === state.hostId) return state // l'Officiante non gioca: non è bersaglio
       if (state.turnOrder[state.turnIndex] !== caster.id) return state // si maledice solo nel proprio turno
       if (caster.points < CAST_COST) return state // essenza insufficiente
 
@@ -176,7 +129,6 @@ export function gameReducer(state, action, ctx = {}) {
       if (willBeActive && activeOn(state, victim.id).length >= MAX_CURSES_PER_VICTIM)
         return state // anima già sovraccarica
 
-      // Paga il costo del lancio.
       let players = {
         ...state.players,
         [caster.id]: { ...caster, points: caster.points - CAST_COST },
@@ -201,7 +153,6 @@ export function gameReducer(state, action, ctx = {}) {
             casterId: caster.id,
             turnsSurvived: 0,
             turnsNeeded: turnsToSurvive(curse),
-            pendingDenounce: null,
           }
         : null
 
@@ -219,56 +170,31 @@ export function gameReducer(state, action, ctx = {}) {
       }
     }
 
-    case 'DENOUNCE_REQUEST': {
-      // Chiunque può accusare, ma solo la PRIMA accusa su una maledizione
-      // conta: resta in sospeso finché l'Officiante non la giudica.
+    case 'DENOUNCE': {
+      // L'Officiante ha visto la violazione e decide subito: chi accusa
+      // ruba punti pari alla gravità, oppure l'accusa viene respinta.
+      if (state.phase !== 'playing') return state
       const inst = state.activeCurses.find((c) => c.instanceId === action.instanceId)
-      if (!inst || inst.pendingDenounce) return state
+      if (!inst) return state
       const accuser = state.players[action.accuserId]
       const victim = state.players[inst.victimId]
       if (!accuser || !victim || accuser.id === victim.id) return state
 
-      return {
-        ...state,
-        activeCurses: state.activeCurses.map((c) =>
-          c.instanceId === inst.instanceId
-            ? { ...c, pendingDenounce: { accuserId: accuser.id, at: now } }
-            : c
-        ),
-        log: trimLog([
-          logEntry(
-            `${accuser.avatar} ${accuser.name} accusa ${victim.avatar} ${victim.name} di aver violato «${inst.curse.title}» — attende il giudizio dell'Officiante`,
-            'denounce-pending'
-          ),
-          ...state.log,
-        ]),
-      }
-    }
-
-    case 'DENOUNCE_RESOLVE': {
-      // Solo l'Officiante (host) giudica l'accusa: approva o respinge.
-      if (action.by !== state.hostId) return state
-      const inst = state.activeCurses.find((c) => c.instanceId === action.instanceId)
-      if (!inst || !inst.pendingDenounce) return state
-      const accuser = state.players[inst.pendingDenounce.accuserId]
-      const victim = state.players[inst.victimId]
-
       if (!action.approve) {
-        const players =
-          accuser && DENOUNCE_REJECT_PENALTY > 0
-            ? {
-                ...state.players,
-                [accuser.id]: { ...accuser, points: accuser.points - DENOUNCE_REJECT_PENALTY },
-              }
-            : state.players
         return {
           ...state,
-          players,
-          activeCurses: state.activeCurses.map((c) =>
-            c.instanceId === inst.instanceId ? { ...c, pendingDenounce: null } : c
-          ),
+          players:
+            DENOUNCE_REJECT_PENALTY > 0
+              ? {
+                  ...state.players,
+                  [accuser.id]: { ...accuser, points: accuser.points - DENOUNCE_REJECT_PENALTY },
+                }
+              : state.players,
           log: trimLog([
-            logEntry(`L'Officiante respinge l'accusa su «${inst.curse.title}»`, 'denounce-reject'),
+            logEntry(
+              `L'Officiante respinge l'accusa di ${accuser.avatar} ${accuser.name} su «${inst.curse.title}»`,
+              'denounce-reject'
+            ),
             ...state.log,
           ]),
         }
@@ -277,23 +203,19 @@ export function gameReducer(state, action, ctx = {}) {
       // Accusa confermata: si rubano i punti ma la maledizione RESTA
       // attiva, solo il conto dei turni per domarla riparte da zero.
       const stake = denounceReward(inst.curse.severity)
-      const players = {
-        ...state.players,
-        ...(victim ? { [victim.id]: { ...victim, points: victim.points - stake } } : {}),
-        ...(accuser ? { [accuser.id]: { ...accuser, points: accuser.points + stake } } : {}),
-      }
-
       return {
         ...state,
-        players,
+        players: {
+          ...state.players,
+          [victim.id]: { ...victim, points: victim.points - stake },
+          [accuser.id]: { ...accuser, points: accuser.points + stake },
+        },
         activeCurses: state.activeCurses.map((c) =>
-          c.instanceId === inst.instanceId
-            ? { ...c, pendingDenounce: null, turnsSurvived: 0 }
-            : c
+          c.instanceId === inst.instanceId ? { ...c, turnsSurvived: 0 } : c
         ),
         log: trimLog([
           logEntry(
-            `L'Officiante conferma: ${accuser?.avatar ?? ''} ${accuser?.name ?? '?'} smaschera ${victim?.avatar ?? ''} ${victim?.name ?? '?'}! +${stake} — «${inst.curse.title}» si riavvia`,
+            `${accuser.avatar} ${accuser.name} smaschera ${victim.avatar} ${victim.name}! +${stake} — «${inst.curse.title}» si riavvia`,
             'denounce'
           ),
           ...state.log,
@@ -302,11 +224,7 @@ export function gameReducer(state, action, ctx = {}) {
     }
 
     case 'ACTION_RESOLVE': {
-      // Solo l'Officiante (host) giudica l'esito: ha visto la performance
-      // dal vivo ed è l'unico arbitro, così il resto del tavolo (incluso
-      // chi ha appena giocato) non deve validare nulla dal telefono.
-      if (action.by !== state.hostId) return state
-      if (!state.currentAction || !state.turnOrder.length) return state
+      if (state.phase !== 'playing' || !state.currentAction || !state.turnOrder.length) return state
       const player = state.players[state.currentAction.playerId]
       if (!player) return state
 
@@ -315,16 +233,12 @@ export function gameReducer(state, action, ctx = {}) {
         ? { ...state.players, [player.id]: { ...player, points: player.points + reward } }
         : state.players
 
-      // Ogni azione risolta è il "tempo" del gioco: le maledizioni non
-      // sotto giudizio avanzano di un turno; chi arriva a `turnsNeeded`
-      // è domata e sparisce, premiando la vittima.
+      // Ogni azione risolta è il "tempo" del gioco: le maledizioni
+      // avanzano di un turno; chi arriva a `turnsNeeded` è domata e
+      // sparisce, premiando la vittima.
       const activeCurses = []
       const survivalLogs = []
       for (const c of state.activeCurses) {
-        if (c.pendingDenounce) {
-          activeCurses.push(c)
-          continue
-        }
         const turnsSurvived = c.turnsSurvived + 1
         if (turnsSurvived < c.turnsNeeded) {
           activeCurses.push({ ...c, turnsSurvived })
@@ -334,25 +248,18 @@ export function gameReducer(state, action, ctx = {}) {
         const victim = players[c.victimId]
         if (victim) players = { ...players, [victim.id]: { ...victim, points: victim.points + bonus } }
         survivalLogs.push(
-          logEntry(
-            `${victim?.avatar ?? '✦'} ${victim?.name ?? '?'} doma «${c.curse.title}» +${bonus}`,
-            'survive'
-          )
+          logEntry(`${victim?.avatar ?? '✦'} ${victim?.name ?? '?'} doma «${c.curse.title}» +${bonus}`, 'survive')
         )
       }
 
       const turnIndex = (state.turnIndex + 1) % state.turnOrder.length
-      const nextPlayerId = state.turnOrder[turnIndex]
-      const nextAction = drawRandomAction(null, rng)
 
       return {
         ...state,
         players,
         activeCurses,
         turnIndex,
-        currentAction: nextAction
-          ? { instanceId: uid('action'), action: nextAction, playerId: nextPlayerId }
-          : null,
+        currentAction: newAction(state.turnOrder[turnIndex], rng),
         log: trimLog([
           ...survivalLogs,
           logEntry(
@@ -366,35 +273,36 @@ export function gameReducer(state, action, ctx = {}) {
       }
     }
 
+    case 'REDRAW_ACTION': {
+      // L'Officiante può cambiare la carta azione se non si adatta al tavolo.
+      if (state.phase !== 'playing' || !state.currentAction) return state
+      let next = state.currentAction
+      for (let i = 0; i < 6 && next.action.id === state.currentAction.action.id; i++)
+        next = newAction(state.currentAction.playerId, rng)
+      return { ...state, currentAction: next }
+    }
+
     case 'PURIFY': {
+      if (state.phase !== 'playing') return state
       const inst = state.activeCurses.find((c) => c.instanceId === action.instanceId)
       if (!inst) return state
       const victim = state.players[inst.victimId]
-      // Solo la vittima può purificarsi.
-      if (!victim || action.by !== victim.id) return state
       const cost = purifyCost(inst.curse.severity)
-      if (victim.points < cost) return state // punti insufficienti
+      if (!victim || victim.points < cost) return state // punti insufficienti
 
       return {
         ...state,
-        players: {
-          ...state.players,
-          [victim.id]: { ...victim, points: victim.points - cost },
-        },
+        players: { ...state.players, [victim.id]: { ...victim, points: victim.points - cost } },
         activeCurses: state.activeCurses.filter((c) => c.instanceId !== action.instanceId),
         log: trimLog([
-          logEntry(
-            `${victim.avatar} ${victim.name} si purifica da «${inst.curse.title}» (−${cost})`,
-            'purify'
-          ),
+          logEntry(`${victim.avatar} ${victim.name} si purifica da «${inst.curse.title}» (−${cost})`, 'purify'),
           ...state.log,
         ]),
       }
     }
 
     case 'REVOKE': {
-      // Solo l'Officiante può revocare (arbitro).
-      if (action.by !== state.hostId) return state
+      if (state.phase !== 'playing') return state
       const inst = state.activeCurses.find((c) => c.instanceId === action.instanceId)
       if (!inst) return state
       const victim = state.players[inst.victimId]
@@ -402,23 +310,43 @@ export function gameReducer(state, action, ctx = {}) {
         ...state,
         activeCurses: state.activeCurses.filter((c) => c.instanceId !== action.instanceId),
         log: trimLog([
-          logEntry(
-            `L'Officiante revoca «${inst.curse.title}» su ${victim?.name ?? '?'}`,
-            'revoke'
-          ),
+          logEntry(`L'Officiante revoca «${inst.curse.title}» su ${victim?.name ?? '?'}`, 'revoke'),
           ...state.log,
         ]),
       }
     }
 
-    case 'RESET_ROUND': {
-      if (action.by !== state.hostId) return state
-      return { ...state, activeCurses: [] }
+    case 'ADJUST_POINTS': {
+      // Correzione manuale dell'Officiante. Le correzioni consecutive sulla
+      // stessa anima si sommano in un'unica riga del grimorio.
+      if (state.phase !== 'playing') return state
+      const player = state.players[action.playerId]
+      if (!player || !action.delta) return state
+      const [last, ...rest] = state.log
+      const merge = last?.kind === 'adjust' && last.playerId === player.id
+      const total = (merge ? last.delta : 0) + action.delta
+      const entry = logEntry(
+        `L'Officiante corregge i punti di ${player.avatar} ${player.name}: ${total > 0 ? '+' : ''}${total}`,
+        'adjust',
+        { playerId: player.id, delta: total }
+      )
+      return {
+        ...state,
+        players: { ...state.players, [player.id]: { ...player, points: player.points + action.delta } },
+        log: trimLog(merge ? (total ? [entry, ...rest] : rest) : [entry, ...state.log]),
+      }
     }
 
-    // Applica uno stato completo ricevuto dall'host (lato client).
-    case 'SYNC':
-      return action.state
+    case 'END_GAME':
+      if (state.phase !== 'playing') return state
+      return {
+        ...state,
+        phase: 'ended',
+        log: trimLog([logEntry('L\'Officiante chiude il rito.', 'start'), ...state.log]),
+      }
+
+    case 'RESET':
+      return createInitialState(state.lastNames?.length ? state.lastNames : Object.values(state.players).map((p) => p.name))
 
     default:
       return state

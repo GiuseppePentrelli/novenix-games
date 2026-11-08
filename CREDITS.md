@@ -32,7 +32,7 @@ Le dipendenze installate sono elencate qui sotto. Le relative licenze complete s
 
 ## Giochi party
 
-Maleficum, Indovina Chi?, Parola a Tempo (`hot-potato`), Top 10 e UnderCover provengono dai repository di Giuseppe salvati in `~/backup/2026-10-22/github/` (ultimo commit di ciascuno). Nella sala sono cambiati solo percorso base, versione di Vite e del plugin React, configurazione di Tailwind per la build dalla radice, font ospitati localmente e il pulsante «← SALA GIOCHI».
+Maleficum, Indovina Chi?, Parola a Tempo (`hot-potato`), Top 10 e UnderCover provengono dai repository di Giuseppe salvati in `~/backup/2026-10-22/github/` (ultimo commit di ciascuno). Nella sala sono cambiati percorso base, versione di Vite e del plugin React, configurazione di Tailwind per la build dalla radice, font ospitati localmente e il pulsante «← SALA GIOCHI». Maleficum è stato riscritto per un solo dispositivo: stesse regole e carte, senza stanze né rete.
 
 | Gioco | Asset | Stato |
 | --- | --- | --- |
@@ -44,7 +44,7 @@ Maleficum, Indovina Chi?, Parola a Tempo (`hot-potato`), Top 10 e UnderCover pro
 
 Nessun gioco richiede più font a Google Fonts durante la visita. «Indovina Chi?» è anche il titolo italiano del gioco da tavolo Hasbro «Guess Who?»: non è stata verificata alcuna autorizzazione sul nome.
 
-I giochi online (Maleficum, Indovina Chi?, UnderCover) collegano i giocatori con PeerJS, che per l'aggancio iniziale usa il server pubblico gratuito di PeerJS; Maleficum indica anche i server STUN pubblici di Google e il relay TURN pubblico Open Relay di Metered.
+I giochi online (Indovina Chi?, UnderCover) collegano i giocatori con PeerJS, che per l'aggancio iniziale usa il server pubblico gratuito di PeerJS. Maleficum non usa più la rete: si gioca su un solo telefono, tenuto dall'Officiante.
 
 Dipendenze dei giochi party, con le licenze complete in `licenses/`:
 

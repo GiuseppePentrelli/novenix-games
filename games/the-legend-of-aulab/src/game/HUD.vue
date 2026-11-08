@@ -88,8 +88,8 @@ function emitJump() {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 0 1rem;
-  height: 56px;
+  padding: env(safe-area-inset-top) max(1rem, env(safe-area-inset-right)) 0 max(1rem, env(safe-area-inset-left));
+  height: calc(56px + env(safe-area-inset-top));
   background: rgba(0, 0, 0, 0.55);
   pointer-events: all;
 }
@@ -171,10 +171,10 @@ function emitJump() {
 .skip-intro:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 #655016; }
 .jump-btn {
   position: absolute;
-  bottom: 2rem;
-  right: 2rem;
-  width: 70px;
-  height: 70px;
+  bottom: max(1.5rem, env(safe-area-inset-bottom));
+  right: max(1.5rem, env(safe-area-inset-right));
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   background: rgba(255, 215, 0, 0.25);
   border: 3px solid #ffd700;
@@ -184,6 +184,12 @@ function emitJump() {
   pointer-events: all;
   touch-action: manipulation;
   user-select: none;
+}
+@media (max-height: 500px) {
+  .topbar { height: calc(40px + env(safe-area-inset-top)); }
+  .pause-box { padding: 1.2rem 2rem; gap: 0.7rem; }
+  .pause-title { font-size: 1.5rem; }
+  .skip-intro { min-height: 52px; padding: 8px 16px; }
 }
 @media (hover: hover) {
   /* Desktop: nasconde il pulsante touch */

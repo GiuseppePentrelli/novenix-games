@@ -5,6 +5,9 @@ import { registerArrivoDocenti } from './scenes/arrivoDocenti.js'
 import { registerTutorial } from './scenes/tutorial.js'
 import { registerLevel1, resetDeathCount } from './scenes/level1.js'
 import { pauseMenuMusic } from '../menu-music.js'
+import { portrait, touchScreen } from '../immersive.js'
+
+const HEIGHT = 720
 
 let initialized = false
 let playing = false
@@ -26,8 +29,8 @@ export function initKaplay() {
     touchToMouse: true,
     pixelDensity: 1,
     debug: false,
-    width: 1280,
-    height: 720,
+    width: Math.round(HEIGHT * Math.min(Math.max(innerWidth / innerHeight, 16 / 9), 2.4)),
+    height: HEIGHT,
     letterbox: true,
     stretch: true,
     crisp: true,
@@ -46,6 +49,9 @@ export function initKaplay() {
   })
   window.addEventListener('blur', () => {
     if (playing && !window.isPaused) window.dispatchEvent(new CustomEvent('hud:pause', { detail: true }))
+  })
+  portrait.addEventListener('change', (event) => {
+    if (event.matches && touchScreen.matches && playing && !window.isPaused) window.dispatchEvent(new CustomEvent('hud:pause', { detail: true }))
   })
   document.addEventListener('visibilitychange', () => {
     if (document.hidden && playing && !window.isPaused) window.dispatchEvent(new CustomEvent('hud:pause', { detail: true }))
